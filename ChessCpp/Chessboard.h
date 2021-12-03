@@ -10,9 +10,12 @@ private:
 	// Coordinates, zero-indexed
 	int m_row{};
 	int m_col{};
+	ChessPiece* m_piece{};
 	
 public:
 	Square(int row = 0, int col = 0);
+	void setPiece(ChessPiece* piece);
+	void removePiece();
 };
 
 class Chessboard
@@ -23,4 +26,6 @@ private:
 
 public:
 	Chessboard();
+	void setPiece(int row, int col, ChessPiece* piece);
+	void removePiece(int row, int col);
 };

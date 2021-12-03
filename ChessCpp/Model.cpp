@@ -17,17 +17,17 @@ void Model::updateView() const
 
 void Model::initialize()
 {
-	for (int i = 0; i <= 32; i++)
+	for (int i = 0; i < 32; i++)
 	{
 		switch (i)
 		{
 		case 0:
-			break;
-		case 1:
 			m_chessPieces[i] = WhiteKing();
+			m_chessboard.setPiece(0, 4, &m_chessPieces[i]);
 			break;
-		case 16:
+		case 15:
 			m_chessPieces[i] = BlackKing();
+			m_chessboard.setPiece(7, 4, &m_chessPieces[i]);
 			break;
 		default:
 			break;
