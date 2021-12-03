@@ -6,18 +6,14 @@
 #include "Model.h"
 #include "Controller.h"
 
+#include "ChessPiece.h"
+
 int main()
 {
     Model model;
     View view{ &model };
     model.setView(&view);
     Controller controller(&model, &view);
-
-    std::cout << "Before update\n";
-    view.display();
-    model.updateView();
-    std::cout << "After update\n";
-    view.display();
 
     bool isExit = false;
     while (!isExit)
