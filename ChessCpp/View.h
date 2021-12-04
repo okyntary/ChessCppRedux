@@ -10,9 +10,9 @@ class View
 {
 	enum class Size
 	{
-		SIZE_SMALL,
-		SIZE_MEDIUM,
-		SIZE_LARGE
+		small,
+		medium,
+		large
 	};
 
 private:
@@ -23,8 +23,9 @@ private:
 	// Contents to display
 	std::string m_display{};
 	// Settings for the content to display
-	Size m_size{ Size::SIZE_SMALL };
-	bool m_flippedStatus{};
+	Size m_size{ Size::small };
+	bool m_flippedStatus{ false };
+	bool m_showCoords{ false };
 
 public:
 	View(const Model * const model) : m_model{ model } {};
@@ -35,6 +36,7 @@ public:
 
 	// Update the contents to be displayed
 	void update();
+	void updateUnflippedSmallCoordless();
 
 	// Display the internal contents 
 	void display() const;

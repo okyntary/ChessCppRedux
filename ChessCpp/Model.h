@@ -15,8 +15,9 @@ private:
 	// Link to View
 	View* m_view{};
 
-	std::array<ChessPiece, 32> m_chessPieces{};
+	std::array<ChessPiece*, 32> m_chessPieces{};
 	Chessboard m_chessboard{};
+	friend class View;
 
 public:
 	Model();

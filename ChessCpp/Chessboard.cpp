@@ -1,15 +1,30 @@
 #include "Chessboard.h"
 
-Square::Square(int row, int col) : m_row(row), m_col(col), m_piece(nullptr) {};
+Chessboard::Square::Square(int row, int col) : m_row(row), m_col(col), m_piece(nullptr) {};
 
-void Square::setPiece(ChessPiece* piece)
+void Chessboard::Square::placePiece(ChessPiece* piece)
 {
 	m_piece = piece;
 }
 
-void Square::removePiece()
+void Chessboard::Square::removePiece()
 {
 	m_piece = nullptr;
+}
+
+bool Chessboard::Square::hasPiece() const
+{
+	return static_cast<bool>(m_piece);
+}
+
+ChessPiece& Chessboard::Square::getPiece()
+{
+	return *m_piece;
+}
+
+const ChessPiece& Chessboard::Square::getPiece() const
+{
+	return *m_piece;
 }
 
 Chessboard::Chessboard()
@@ -23,12 +38,27 @@ Chessboard::Chessboard()
 	}
 }
 
-void Chessboard::setPiece(int row, int col, ChessPiece* piece)
+void Chessboard::placePiece(int row, int col, ChessPiece* piece)
 {
-	m_chessboard[row][col].setPiece(piece);
+	m_chessboard[row][col].placePiece(piece);
 }
 
 void Chessboard::removePiece(int row, int col)
 {
 	m_chessboard[row][col].removePiece();
+}
+
+bool Chessboard::hasPiece(int row, int col) const
+{
+	return m_chessboard[row][col].hasPiece();
+}
+
+ChessPiece& Chessboard::getPiece(int row, int col)
+{
+	return m_chessboard[row][col].getPiece();
+}
+
+const ChessPiece& Chessboard::getPiece(int row, int col) const
+{
+	return m_chessboard[row][col].getPiece();
 }
