@@ -14,6 +14,7 @@ class Controller
 	{
 		exit,
 		display,
+		setSize,
 		toggleFlippedStatus,
 		toggleCoords,
 		null
@@ -29,6 +30,7 @@ public:
 
 	bool exit() const;
 	bool display() const;
+	bool setSize(std::string size) const;
 	bool toggleFlippedStatus() const;
 	bool toggleCoords() const;
 	bool null() const;

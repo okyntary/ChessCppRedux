@@ -29,9 +29,9 @@ const ChessPiece& Chessboard::Square::getPiece() const
 
 Chessboard::Chessboard()
 {
-	for (int i = 0; i < 8; i++)
+	for (int i = 0; i < 8; ++i)
 	{
-		for (int j = 0; j < 8; j++)
+		for (int j = 0; j < 8; ++j)
 		{
 			m_chessboard[i][j] = Square(i, j);
 		}

@@ -8,6 +8,7 @@ class Model;
 
 class View
 {
+public:
 	enum class Size
 	{
 		small,
@@ -27,6 +28,14 @@ private:
 	bool m_flippedStatus{ false };
 	bool m_showCoords{ false };
 
+	static const std::string mediumUpperLineBreak;
+	static const std::string mediumInnerLineBreak;
+	static const std::string mediumLowerLineBreak;
+
+	static const std::string largeUpperLineBreak;
+	static const std::string largeInnerLineBreak;
+	static const std::string largeLowerLineBreak;
+
 public:
 	View(const Model * const model) : m_model{ model } {};
 
@@ -38,10 +47,24 @@ public:
 
 	// Update the contents to be displayed
 	void update();
+
+	// Update methods for Size::small
 	void updateUnflippedSmallCoordless();
 	void updateUnflippedSmallCoordful();
 	void updateFlippedSmallCoordless();
 	void updateFlippedSmallCoordful();
+
+	// Update methods for Size::medium
+	void updateUnflippedMediumCoordless();
+	void updateUnflippedMediumCoordful();
+	void updateFlippedMediumCoordless();
+	void updateFlippedMediumCoordful();
+
+	// Update methods for Size::large
+	void updateUnflippedLargeCoordless();
+	void updateUnflippedLargeCoordful();
+	void updateFlippedLargeCoordless();
+	void updateFlippedLargeCoordful();
 
 	// Display the internal contents 
 	void display() const;
