@@ -32,11 +32,16 @@ public:
 
 	// Set the values of the respective members of the class
 	void setSize(Size size);
-	void setFlippedStatus(bool flippedStatus);
+	// Change the settings of View
+	void toggleFlippedStatus();
+	void toggleCoords();
 
 	// Update the contents to be displayed
 	void update();
 	void updateUnflippedSmallCoordless();
+	void updateUnflippedSmallCoordful();
+	void updateFlippedSmallCoordless();
+	void updateFlippedSmallCoordful();
 
 	// Display the internal contents 
 	void display() const;
