@@ -12,7 +12,7 @@ class Controller
 {
 	enum class Command
 	{
-		exit,
+		quit,
 		display,
 		setSize,
 		toggleFlippedStatus,
@@ -28,9 +28,9 @@ public:
 	Controller(Model* const model, View* const view);
 	bool readInput() const;
 
-	bool exit() const;
+	bool quit() const;
 	bool display() const;
-	bool setSize(std::string size) const;
+	bool setSize(const std::string& size) const;
 	bool toggleFlippedStatus() const;
 	bool toggleCoords() const;
 	bool null() const;

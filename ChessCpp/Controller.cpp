@@ -9,16 +9,16 @@ Controller::Controller(Model* const model, View* const view) : m_model{ model },
 
 bool Controller::readInput() const
 {
-	// Todo: preprocess string (trimming)
+	// Todo: preprocess string (trimming)?
 
 	std::string input;
 	std::getline(std::cin >> std::ws , input);
 	Controller::Command command{};
 	std::vector<std::string> params{};
 
-	if (input == "exit" || input == "e")
+	if (input == "quit" || input == "q")
 	{
-		command = Command::exit;
+		command = Command::quit;
 	}
 	else if (input == "display" || input == "d")
 	{
@@ -54,8 +54,8 @@ bool Controller::readInput() const
 
 	switch (command)
 	{
-	case Controller::Command::exit:
-		return exit();
+	case Controller::Command::quit:
+		return quit();
 	case Controller::Command::display:
 		return display();
 	case Controller::Command::setSize:
@@ -71,9 +71,9 @@ bool Controller::readInput() const
 	}
 }
 
-bool Controller::exit() const
+bool Controller::quit() const
 {
-	std::cout << "Exiting.\n";
+	std::cout << "Quitting.\n";
 	return true;
 }
 
@@ -83,7 +83,7 @@ bool Controller::display() const
 	return false;
 }
 
-bool Controller::setSize(std::string size) const
+bool Controller::setSize(const std::string& size) const
 {
 	std::cout << "Setting chessboard size to " << size << ".\n";
 	View::Size viewSize{};

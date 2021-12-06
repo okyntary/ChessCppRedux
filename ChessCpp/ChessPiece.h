@@ -1,6 +1,9 @@
 #pragma once
 
 #include <string>
+#include <vector>
+
+#include "Coordinates.h"
 
 enum class PieceColor
 {
@@ -20,19 +23,27 @@ enum class PieceType
 	pawn
 };
 
-// ChessPiece class
 class ChessPiece
 {
 private:
 	PieceColor m_color{ PieceColor::null };
 	PieceType m_type{ PieceType::null };
-	bool hasMoved{ false };
-	bool isCaptured{ false };
+	int m_moveCount{0};
+	bool m_isCaptured{ false };
 	friend class View;
 
 public:
 	ChessPiece(PieceColor color = PieceColor::null, PieceType type = PieceType::null);
+	void increaseMoveCount();
+	void decreaseMoveCount();
+	void setCapturedStatus(bool isCaptured);
+	void setAsCaptured();
+
+	// Getter methods
+	bool hasMoved() const;
+	bool isCaptured() const;
 	virtual const std::string toString() const = 0;
+	virtual std::vector<Coordinates> getTargetSquares(int row, int col) const = 0;
 };
 
 // NullPiece class
@@ -41,6 +52,7 @@ class NullPiece : public ChessPiece
 public:
 	NullPiece();
 	const std::string toString() const override;
+	std::vector<Coordinates> getTargetSquares(int row, int col) const override;
 };
 
 // King classes
@@ -49,6 +61,7 @@ class King : public ChessPiece
 public:
 	King(PieceColor color);
 	virtual const std::string toString() const override = 0;
+	std::vector<Coordinates> getTargetSquares(int row, int col) const override;
 };
 
 class WhiteKing : public King
@@ -71,6 +84,7 @@ class Queen : public ChessPiece
 public:
 	Queen(PieceColor color);
 	virtual const std::string toString() const override = 0;
+	std::vector<Coordinates> getTargetSquares(int row, int col) const override;
 };
 
 class WhiteQueen : public Queen
@@ -93,6 +107,7 @@ class Rook : public ChessPiece
 public:
 	Rook(PieceColor color);
 	virtual const std::string toString() const override = 0;
+	std::vector<Coordinates> getTargetSquares(int row, int col) const override;
 };
 
 class WhiteRook : public Rook
@@ -115,6 +130,7 @@ class Bishop : public ChessPiece
 public:
 	Bishop(PieceColor color);
 	virtual const std::string toString() const override = 0;
+	std::vector<Coordinates> getTargetSquares(int row, int col) const override;
 };
 
 class WhiteBishop : public Bishop
@@ -137,6 +153,7 @@ class Knight : public ChessPiece
 public:
 	Knight(PieceColor color);
 	virtual const std::string toString() const override = 0;
+	std::vector<Coordinates> getTargetSquares(int row, int col) const override;
 };
 
 class WhiteKnight : public Knight
@@ -159,6 +176,7 @@ class Pawn : public ChessPiece
 public:
 	Pawn(PieceColor color);
 	virtual const std::string toString() const override = 0;
+	virtual std::vector<Coordinates> getTargetSquares(int row, int col) const override = 0;
 };
 
 class WhitePawn : public Pawn
@@ -166,6 +184,7 @@ class WhitePawn : public Pawn
 public:
 	WhitePawn();
 	const std::string toString() const override;
+	std::vector<Coordinates> getTargetSquares(int row, int col) const override;
 };
 
 class BlackPawn : public Pawn
@@ -173,4 +192,5 @@ class BlackPawn : public Pawn
 public:
 	BlackPawn();
 	const std::string toString() const override;
+	std::vector<Coordinates> getTargetSquares(int row, int col) const override;
 };

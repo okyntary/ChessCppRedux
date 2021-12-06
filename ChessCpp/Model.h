@@ -1,12 +1,14 @@
 #pragma once
 
 #include <array>
+#include <vector>
 
 class View;
 #include "View.h" 
 
 #include "Chessboard.h"
 #include "ChessPiece.h"
+#include "ChessMove.h"
 
 class Model
 {
@@ -17,6 +19,9 @@ private:
 
 	std::array<ChessPiece*, 32> m_chessPieces{};
 	Chessboard m_chessboard{};
+	std::vector<ChessMove> m_validMoves;
+	bool currentPlayer{false};
+
 	friend class View;
 
 public:
@@ -28,4 +33,7 @@ public:
 
 	// Methods related to the actual model
 	void initialize();
+
+	void testMove();
+	void testUndoMove();
 };

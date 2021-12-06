@@ -1,4 +1,7 @@
 #include "Model.h"
+#include "Chessboard.h"
+#include "ChessMove.h"
+#include "ChessPiece.h"
 
 Model::Model()
 {
@@ -19,6 +22,7 @@ void Model::updateView() const
 
 void Model::initialize()
 {
+	// Initial set of pieces
 	static WhiteKing wk1{};
 	static WhiteQueen wq1{};
 	static WhiteRook wr1{};
@@ -189,4 +193,16 @@ void Model::initialize()
 			break;
 		}
 	}
+}
+
+void Model::testMove()
+{
+	ChessMove move1{ m_chessPieces[6], 0, 1, 2, 2, false, nullptr };
+	move1.applyMove(m_chessboard);
+}
+
+void Model::testUndoMove()
+{
+	ChessMove move1{ m_chessPieces[6], 0, 1, 2, 2, false, nullptr };
+	move1.undoMove(m_chessboard);
 }
