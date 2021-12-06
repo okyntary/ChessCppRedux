@@ -90,10 +90,10 @@ void View::updateUnflippedSmallCoordless()
 	{
 		for (int j = 0; j < 8; ++j)
 		{
-			bool hasPiece = m_model->m_chessboard.hasPiece(i, j);
+			bool hasPiece = m_model->m_chessboard.hasPiece(Coordinates{ i, j });
 			if (hasPiece)
 			{
-				m_display += "|" + m_model->m_chessboard.getPiece(i, j).toString();
+				m_display += "|" + m_model->m_chessboard.getPiece(Coordinates{ i, j }).toString();
 			}
 			else
 			{
@@ -112,10 +112,10 @@ void View::updateUnflippedSmallCoordful()
 	{
 		for (int j = 0; j < 8; ++j)
 		{
-			bool hasPiece = m_model->m_chessboard.hasPiece(i, j);
+			bool hasPiece = m_model->m_chessboard.hasPiece(Coordinates{ i, j });
 			if (hasPiece)
 			{
-				m_display += "|" + m_model->m_chessboard.getPiece(i, j).toString();
+				m_display += "|" + m_model->m_chessboard.getPiece(Coordinates{ i, j }).toString();
 			}
 			else
 			{
@@ -135,10 +135,10 @@ void View::updateFlippedSmallCoordless()
 	{
 		for (int j = 7; j >= 0; --j)
 		{
-			bool hasPiece = m_model->m_chessboard.hasPiece(i, j);
+			bool hasPiece = m_model->m_chessboard.hasPiece(Coordinates{ i, j });
 			if (hasPiece)
 			{
-				m_display += "|" + m_model->m_chessboard.getPiece(i, j).toString();
+				m_display += "|" + m_model->m_chessboard.getPiece(Coordinates{ i, j }).toString();
 			}
 			else
 			{
@@ -157,10 +157,10 @@ void View::updateFlippedSmallCoordful()
 	{
 		for (int j = 7; j >= 0; --j)
 		{
-			bool hasPiece = m_model->m_chessboard.hasPiece(i, j);
+			bool hasPiece = m_model->m_chessboard.hasPiece(Coordinates{ i, j });
 			if (hasPiece)
 			{
-				m_display += "|" + m_model->m_chessboard.getPiece(i, j).toString();
+				m_display += "|" + m_model->m_chessboard.getPiece(Coordinates{ i, j }).toString();
 			}
 			else
 			{
@@ -180,10 +180,10 @@ void View::updateUnflippedMediumCoordless()
 	{
 		for (int j = 0; j < 8; ++j)
 		{
-			bool hasPiece = m_model->m_chessboard.hasPiece(i, j);
+			bool hasPiece = m_model->m_chessboard.hasPiece(Coordinates{ i, j });
 			if (hasPiece)
 			{
-				m_display += "|  " + m_model->m_chessboard.getPiece(i, j).toString() + "  ";
+				m_display += "|  " + m_model->m_chessboard.getPiece(Coordinates{ i, j }).toString() + "  ";
 			}
 			else
 			{
@@ -203,10 +203,10 @@ void View::updateUnflippedMediumCoordful()
 	{
 		for (int j = 0; j < 8; ++j)
 		{
-			bool hasPiece = m_model->m_chessboard.hasPiece(i, j);
+			bool hasPiece = m_model->m_chessboard.hasPiece(Coordinates{ i, j });
 			if (hasPiece)
 			{
-				m_display += "|  " + m_model->m_chessboard.getPiece(i, j).toString() + "  ";
+				m_display += "|  " + m_model->m_chessboard.getPiece(Coordinates{ i, j }).toString() + "  ";
 			}
 			else
 			{
@@ -227,10 +227,10 @@ void View::updateFlippedMediumCoordless()
 	{
 		for (int j = 7; j >= 0; --j)
 		{
-			bool hasPiece = m_model->m_chessboard.hasPiece(i, j);
+			bool hasPiece = m_model->m_chessboard.hasPiece(Coordinates{ i, j });
 			if (hasPiece)
 			{
-				m_display += "|  " + m_model->m_chessboard.getPiece(i, j).toString() + "  ";
+				m_display += "|  " + m_model->m_chessboard.getPiece(Coordinates{ i, j }).toString() + "  ";
 			}
 			else
 			{
@@ -250,10 +250,10 @@ void View::updateFlippedMediumCoordful()
 	{
 		for (int j = 7; j >= 0; --j)
 		{
-			bool hasPiece = m_model->m_chessboard.hasPiece(i, j);
+			bool hasPiece = m_model->m_chessboard.hasPiece(Coordinates{ i, j });
 			if (hasPiece)
 			{
-				m_display += "|  " + m_model->m_chessboard.getPiece(i, j).toString() + "  ";
+				m_display += "|  " + m_model->m_chessboard.getPiece(Coordinates{ i, j }).toString() + "  ";
 			}
 			else
 			{
@@ -274,10 +274,10 @@ void View::updateUnflippedLargeCoordless()
 	{
 		for (int j = 0; j < 8; ++j)
 		{
-			bool hasPiece = m_model->m_chessboard.hasPiece(i, j);
+			bool hasPiece = m_model->m_chessboard.hasPiece(Coordinates{ i, j });
 			if (hasPiece)
 			{
-				m_display += "|    " + m_model->m_chessboard.getPiece(i, j).toString() + "    ";
+				m_display += "|    " + m_model->m_chessboard.getPiece(Coordinates{ i, j }).toString() + "    ";
 			}
 			else
 			{
@@ -297,10 +297,10 @@ void View::updateUnflippedLargeCoordful()
 	{
 		for (int j = 0; j < 8; ++j)
 		{
-			bool hasPiece = m_model->m_chessboard.hasPiece(i, j);
+			bool hasPiece = m_model->m_chessboard.hasPiece(Coordinates{ i, j });
 			if (hasPiece)
 			{
-				m_display += "|    " + m_model->m_chessboard.getPiece(i, j).toString() + "    ";
+				m_display += "|    " + m_model->m_chessboard.getPiece(Coordinates{ i, j }).toString() + "    ";
 			}
 			else
 			{
@@ -321,10 +321,10 @@ void View::updateFlippedLargeCoordless()
 	{
 		for (int j = 7; j >= 0; --j)
 		{
-			bool hasPiece = m_model->m_chessboard.hasPiece(i, j);
+			bool hasPiece = m_model->m_chessboard.hasPiece(Coordinates{ i, j });
 			if (hasPiece)
 			{
-				m_display += "|    " + m_model->m_chessboard.getPiece(i, j).toString() + "    ";
+				m_display += "|    " + m_model->m_chessboard.getPiece(Coordinates{ i, j }).toString() + "    ";
 			}
 			else
 			{
@@ -344,10 +344,10 @@ void View::updateFlippedLargeCoordful()
 	{
 		for (int j = 7; j >= 0; --j)
 		{
-			bool hasPiece = m_model->m_chessboard.hasPiece(i, j);
+			bool hasPiece = m_model->m_chessboard.hasPiece(Coordinates{ i, j });
 			if (hasPiece)
 			{
-				m_display += "|    " + m_model->m_chessboard.getPiece(i, j).toString() + "    ";
+				m_display += "|    " + m_model->m_chessboard.getPiece(Coordinates{ i, j }).toString() + "    ";
 			}
 			else
 			{

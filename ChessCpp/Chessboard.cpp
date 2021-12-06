@@ -1,28 +1,28 @@
 #include "Chessboard.h"
 
-Chessboard::Square::Square(int row, int col) : m_row(row), m_col(col), m_piece(nullptr) {};
+Square::Square(Coordinates coordinates) : m_coordinates(coordinates), m_piece(nullptr) {};
 
-void Chessboard::Square::placePiece(ChessPiece* piece)
+void Square::placePiece(ChessPiece* piece)
 {
 	m_piece = piece;
 }
 
-void Chessboard::Square::removePiece()
+void Square::removePiece()
 {
 	m_piece = nullptr;
 }
 
-bool Chessboard::Square::hasPiece() const
+bool Square::hasPiece() const
 {
 	return static_cast<bool>(m_piece);
 }
 
-ChessPiece& Chessboard::Square::getPiece()
+ChessPiece& Square::getPiece()
 {
 	return *m_piece;
 }
 
-const ChessPiece& Chessboard::Square::getPiece() const
+const ChessPiece& Square::getPiece() const
 {
 	return *m_piece;
 }
@@ -33,32 +33,32 @@ Chessboard::Chessboard()
 	{
 		for (int j = 0; j < 8; ++j)
 		{
-			m_chessboard[i][j] = Square(i, j);
+			m_chessboard[i][j] = Square{Coordinates{ i, j }};
 		}
 	}
 }
 
-void Chessboard::placePiece(int row, int col, ChessPiece* piece)
+void Chessboard::placePiece(Coordinates coordinates, ChessPiece* piece)
 {
-	m_chessboard[row][col].placePiece(piece);
+	m_chessboard[coordinates.row][coordinates.col].placePiece(piece);
 }
 
-void Chessboard::removePiece(int row, int col)
+void Chessboard::removePiece(Coordinates coordinates)
 {
-	m_chessboard[row][col].removePiece();
+	m_chessboard[coordinates.row][coordinates.col].removePiece();
 }
 
-bool Chessboard::hasPiece(int row, int col) const
+bool Chessboard::hasPiece(Coordinates coordinates) const
 {
-	return m_chessboard[row][col].hasPiece();
+	return m_chessboard[coordinates.row][coordinates.col].hasPiece();
 }
 
-ChessPiece& Chessboard::getPiece(int row, int col)
+ChessPiece& Chessboard::getPiece(Coordinates coordinates)
 {
-	return m_chessboard[row][col].getPiece();
+	return m_chessboard[coordinates.row][coordinates.col].getPiece();
 }
 
-const ChessPiece& Chessboard::getPiece(int row, int col) const
+const ChessPiece& Chessboard::getPiece(Coordinates coordinates) const
 {
-	return m_chessboard[row][col].getPiece();
+	return m_chessboard[coordinates.row][coordinates.col].getPiece();
 }

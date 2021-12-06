@@ -45,7 +45,7 @@ const std::string NullPiece::toString() const
 	return "NP";
 }
 
-std::vector<Coordinates> NullPiece::getTargetSquares(int row, int col) const
+std::vector<Coordinates> NullPiece::getTargetSquares(Coordinates coordinates) const
 {
 	return std::vector<Coordinates>{};
 }
@@ -53,7 +53,7 @@ std::vector<Coordinates> NullPiece::getTargetSquares(int row, int col) const
 // King methods
 King::King(PieceColor color) : ChessPiece(color, PieceType::king) {};
 
-std::vector<Coordinates> King::getTargetSquares(int row, int col) const
+std::vector<Coordinates> King::getTargetSquares(Coordinates coordinates) const
 {
 	return std::vector<Coordinates>{};
 }
@@ -75,7 +75,7 @@ const std::string BlackKing::toString() const
 // Queen methods
 Queen::Queen(PieceColor color) : ChessPiece(color, PieceType::queen) {};
 
-std::vector<Coordinates> Queen::getTargetSquares(int row, int col) const
+std::vector<Coordinates> Queen::getTargetSquares(Coordinates coordinates) const
 {
 	return std::vector<Coordinates>{};
 }
@@ -97,7 +97,7 @@ const std::string BlackQueen::toString() const
 // Rook methods
 Rook::Rook(PieceColor color) : ChessPiece(color, PieceType::rook) {};
 
-std::vector<Coordinates> Rook::getTargetSquares(int row, int col) const
+std::vector<Coordinates> Rook::getTargetSquares(Coordinates coordinates) const
 {
 	return std::vector<Coordinates>{};
 }
@@ -119,7 +119,7 @@ const std::string BlackRook::toString() const
 // Bishop methods
 Bishop::Bishop(PieceColor color) : ChessPiece(color, PieceType::bishop) {};
 
-std::vector<Coordinates> Bishop::getTargetSquares(int row, int col) const
+std::vector<Coordinates> Bishop::getTargetSquares(Coordinates coordinates) const
 {
 	return std::vector<Coordinates>{};
 }
@@ -141,7 +141,7 @@ const std::string BlackBishop::toString() const
 // Knight methods
 Knight::Knight(PieceColor color) : ChessPiece(color, PieceType::knight) {};
 
-std::vector<Coordinates> Knight::getTargetSquares(int row, int col) const
+std::vector<Coordinates> Knight::getTargetSquares(Coordinates coordinates) const
 {
 	return std::vector<Coordinates>{};
 }
@@ -171,7 +171,7 @@ const std::string WhitePawn::toString() const
 	return "WP";
 }
 
-std::vector<Coordinates> WhitePawn::getTargetSquares(int row, int col) const
+std::vector<Coordinates> WhitePawn::getTargetSquares(Coordinates coordinates) const
 {
 	return std::vector<Coordinates>{};
 }
@@ -183,7 +183,7 @@ const std::string BlackPawn::toString() const
 	return "BP";
 }
 
-std::vector<Coordinates> BlackPawn::getTargetSquares(int row, int col) const
+std::vector<Coordinates> BlackPawn::getTargetSquares(Coordinates coordinates) const
 {
 	return std::vector<Coordinates>{};
 }

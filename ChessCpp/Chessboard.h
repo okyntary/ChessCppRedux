@@ -2,38 +2,38 @@
 
 #include <array>
 
+#include "Coordinates.h"
 #include "ChessPiece.h"
+
+class Square
+{
+private:
+	Coordinates m_coordinates;
+	ChessPiece* m_piece{};
+	friend class View;
+	
+public:
+	Square(Coordinates coordinates = Coordinates{ 0, 0 });
+
+	void placePiece(ChessPiece* piece);
+	void removePiece();
+	bool hasPiece() const;
+	ChessPiece& getPiece();
+	const ChessPiece& getPiece() const;
+};
 
 class Chessboard
 {
 private:
-	class Square
-	{
-	private:
-		// Coordinates, zero-indexed
-		int m_row{};
-		int m_col{};
-		ChessPiece* m_piece{};
-		friend class View;
-		
-	public:
-		Square(int row = 0, int col = 0);
-		void placePiece(ChessPiece* piece);
-		void removePiece();
-		bool hasPiece() const;
-		ChessPiece& getPiece();
-		const ChessPiece& getPiece() const;
-	};
-
 	// Row-major order
 	std::array<std::array<Square, 8>, 8> m_chessboard{};
 	friend class View;
 
 public:
 	Chessboard();
-	void placePiece(int row, int col, ChessPiece* piece);
-	void removePiece(int row, int col);
-	bool hasPiece(int row, int col) const;
-	ChessPiece& getPiece(int row, int col);
-	const ChessPiece& getPiece(int row, int col) const;
+	void placePiece(Coordinates coordinates, ChessPiece* piece);
+	void removePiece(Coordinates coordinates);
+	bool hasPiece(Coordinates coordinates) const;
+	ChessPiece& getPiece(Coordinates coordinates);
+	const ChessPiece& getPiece(Coordinates coordinates) const;
 };

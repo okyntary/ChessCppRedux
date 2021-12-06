@@ -2,6 +2,6 @@
 
 struct Coordinates
 {
-	const int row;
-	const int col;
+	int row;
+	int col;
 };

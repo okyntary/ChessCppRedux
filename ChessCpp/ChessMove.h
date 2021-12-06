@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Coordinates.h"
 #include "Chessboard.h"
 #include "ChessPiece.h"
 
@@ -7,16 +8,13 @@ class ChessMove
 {
 private:
 	ChessPiece* m_chessPiece{ nullptr };
-	const int m_start_x{};
-	const int m_start_y{};
-	const int m_end_x{};
-	const int m_end_y{};
+	const Coordinates m_start;
+	const Coordinates m_end;
 	const bool m_isCapture{};
 	ChessPiece* m_capturedPiece{ nullptr };
 	
 public:
-	ChessMove(ChessPiece* chessPiece, const int start_x, const int start_y,
-			const int end_x, const int end_y, const bool isCapture, ChessPiece* capturedPiece);
+	ChessMove(ChessPiece* chessPiece, const Coordinates start, const Coordinates end, const bool isCapture, ChessPiece* capturedPiece);
 	virtual void applyMove(Chessboard& chessboard);
 	// Can only be done right after apply move is done
 	virtual void undoMove(Chessboard& chessboard);
