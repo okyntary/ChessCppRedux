@@ -208,3 +208,55 @@ void Model::testUndoMove()
 	ChessMove move1{ m_chessPieces[6], Coordinates{0, 1}, Coordinates{2,2}, false, nullptr };
 	move1.undoMove(m_chessboard);
 }
+
+void Model::testTargetSquares()
+{
+	std::vector<Coordinates> targetSquares1 = m_chessPieces[6]->getTargetSquares(Coordinates{ 0, 1 });
+	std::cout << "Knight at b1:\n";
+	for (int i = 0; i < targetSquares1.size(); ++i)
+	{
+		std::cout << "(" << targetSquares1.at(i).row << ", " << targetSquares1.at(i).col << ")\n";
+	}
+
+	std::cout << "Rook at a1:\n";
+	std::vector<Coordinates> targetSquares2 = m_chessPieces[2]->getTargetSquares(Coordinates{ 0, 0 });
+	for (int i = 0; i < targetSquares2.size(); ++i)
+	{
+		std::cout << "(" << targetSquares2.at(i).row << ", " << targetSquares2.at(i).col << ")\n";
+	}
+
+	std::cout << "Bishop at c1:\n";
+	std::vector<Coordinates> targetSquares3 = m_chessPieces[4]->getTargetSquares(Coordinates{ 0, 2 });
+	for (int i = 0; i < targetSquares3.size(); ++i)
+	{
+		std::cout << "(" << targetSquares3.at(i).row << ", " << targetSquares3.at(i).col << ")\n";
+	}
+
+	std::cout << "Queen at d1:\n";
+	std::vector<Coordinates> targetSquares4 = m_chessPieces[1]->getTargetSquares(Coordinates{ 0, 3 });
+	for (int i = 0; i < targetSquares4.size(); ++i)
+	{
+		std::cout << "(" << targetSquares4.at(i).row << ", " << targetSquares4.at(i).col << ")\n";
+	}
+
+	std::cout << "King at e1:\n";
+	std::vector<Coordinates> targetSquares5 = m_chessPieces[0]->getTargetSquares(Coordinates{ 0, 4 });
+	for (int i = 0; i < targetSquares5.size(); ++i)
+	{
+		std::cout << "(" << targetSquares5.at(i).row << ", " << targetSquares5.at(i).col << ")\n";
+	}
+
+	std::cout << "Pawn at h2:\n";
+	std::vector<Coordinates> targetSquares6 = m_chessPieces[15]->getTargetSquares(Coordinates{ 1, 7 });
+	for (int i = 0; i < targetSquares6.size(); ++i)
+	{
+		std::cout << "(" << targetSquares6.at(i).row << ", " << targetSquares6.at(i).col << ")\n";
+	}
+
+	std::cout << "Pawn at d7:\n";
+	std::vector<Coordinates> targetSquares7 = m_chessPieces[27]->getTargetSquares(Coordinates{ 6, 3 });
+	for (int i = 0; i < targetSquares7.size(); ++i)
+	{
+		std::cout << "(" << targetSquares7.at(i).row << ", " << targetSquares7.at(i).col << ")\n";
+	}
+}

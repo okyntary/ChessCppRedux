@@ -42,4 +42,6 @@ public:
 
 	void testMove();
 	void testUndoMove();
+
+	void testTargetSquares();
 };

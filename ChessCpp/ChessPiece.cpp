@@ -62,9 +62,9 @@ std::vector<Coordinates> King::getTargetSquares(Coordinates coordinates) const
 	{
 		for (int j = start_row - 1; j <= start_row + 1; ++j)
 		{
+			if (i == start_col && j == start_row) continue;
 			Coordinates targetSquare{ j, i };
-			if (targetSquare.isOnBoard() && i != start_col && j != start_row)
-				targetSquares.push_back(targetSquare);
+			if (targetSquare.isOnBoard()) targetSquares.push_back(targetSquare);
 		}
 	}
 	return targetSquares;
@@ -97,13 +97,27 @@ std::vector<Coordinates> Queen::getTargetSquares(Coordinates coordinates) const
 	for (int i = 0; i < 8; ++i)
 	{
 		int colDiff = std::abs(start_col - i);
+		if (colDiff == 0) continue;
 		// Counting row number
 		for (int j = start_row - colDiff; j <= start_row + colDiff; j += 2 * colDiff)
 		{
+			if (i == start_col && j == start_row) continue;
+
 			Coordinates targetSquare{ j, i };
 			if (targetSquare.isOnBoard()) targetSquares.push_back(targetSquare);
 		}
 	}
+
+	for (int i = 0; i < 8; ++i)
+	{
+		if (i != start_col) targetSquares.push_back(Coordinates{ start_row, i });
+	}
+	
+	for (int j = 0; j < 8; ++j)
+	{
+		if (j != start_row) targetSquares.push_back(Coordinates{ j, start_col });
+	}
+
 	return targetSquares;
 
 }
@@ -170,24 +184,16 @@ std::vector<Coordinates> Bishop::getTargetSquares(Coordinates coordinates) const
 	for (int i = 0; i < 8; ++i)
 	{
 		int colDiff = std::abs(start_col - i);
+		if (colDiff == 0) continue;
 		// Counting row number
 		for (int j = start_row - colDiff; j <= start_row + colDiff; j += 2 * colDiff)
 		{
+			if (i == start_col && j == start_row) continue;
+
 			Coordinates targetSquare{ j, i };
 			if (targetSquare.isOnBoard()) targetSquares.push_back(targetSquare);
 		}
 	}
-
-	for (int i = 0; i < 8; ++i)
-	{
-		if (i != start_col) targetSquares.push_back(Coordinates{ start_row, i });
-	}
-	
-	for (int j = 0; j < 8; ++j)
-	{
-		if (j != start_row) targetSquares.push_back(Coordinates{ j, start_col });
-	}
-
 	return targetSquares;
 }
 
@@ -267,7 +273,7 @@ std::vector<Coordinates> WhitePawn::getTargetSquares(Coordinates coordinates) co
 	
 	if (m_moveCount == 0)
 	{
-		Coordinates targetSquare{ start_col, start_row + 2 };
+		Coordinates targetSquare{ start_row + 2, start_col };
 		targetSquares.push_back(targetSquare);
 	}
 
@@ -294,7 +300,7 @@ std::vector<Coordinates> BlackPawn::getTargetSquares(Coordinates coordinates) co
 	
 	if (m_moveCount == 0)
 	{
-		Coordinates targetSquare{ start_col, start_row - 2 };
+		Coordinates targetSquare{ start_row - 2, start_col };
 		targetSquares.push_back(targetSquare);
 	}
 
