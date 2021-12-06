@@ -13,6 +13,12 @@ class View;
 class Model
 {
 private:
+	enum class Player
+	{
+		white,
+		black
+	};
+
 	// Circular dependency here, acceptable since scope of program is small
 	// Link to View
 	View* m_view{};
@@ -20,7 +26,7 @@ private:
 	std::array<ChessPiece*, 32> m_chessPieces{};
 	Chessboard m_chessboard{};
 	std::vector<ChessMove> m_validMoves;
-	bool currentPlayer{false};
+	Player currentPlayer{Player::white};
 
 	friend class View;
 

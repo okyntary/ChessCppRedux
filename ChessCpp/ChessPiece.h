@@ -25,7 +25,7 @@ enum class PieceType
 
 class ChessPiece
 {
-private:
+protected:
 	PieceColor m_color{ PieceColor::null };
 	PieceType m_type{ PieceType::null };
 	int m_moveCount{0};

@@ -55,7 +55,19 @@ King::King(PieceColor color) : ChessPiece(color, PieceType::king) {};
 
 std::vector<Coordinates> King::getTargetSquares(Coordinates coordinates) const
 {
-	return std::vector<Coordinates>{};
+	std::vector<Coordinates> targetSquares{};
+	int start_row = coordinates.row;
+	int start_col = coordinates.col;
+	for (int i = start_col - 1; i <= start_col + 1; ++i)
+	{
+		for (int j = start_row - 1; j <= start_row + 1; ++j)
+		{
+			Coordinates targetSquare{ j, i };
+			if (targetSquare.isOnBoard() && i != start_col && j != start_row)
+				targetSquares.push_back(targetSquare);
+		}
+	}
+	return targetSquares;
 }
 
 WhiteKing::WhiteKing() : King::King(PieceColor::white) {};
@@ -77,7 +89,23 @@ Queen::Queen(PieceColor color) : ChessPiece(color, PieceType::queen) {};
 
 std::vector<Coordinates> Queen::getTargetSquares(Coordinates coordinates) const
 {
-	return std::vector<Coordinates>{};
+	std::vector<Coordinates> targetSquares{};
+	int start_row = coordinates.row;
+	int start_col = coordinates.col;
+
+	// Counting column number
+	for (int i = 0; i < 8; ++i)
+	{
+		int colDiff = std::abs(start_col - i);
+		// Counting row number
+		for (int j = start_row - colDiff; j <= start_row + colDiff; j += 2 * colDiff)
+		{
+			Coordinates targetSquare{ j, i };
+			if (targetSquare.isOnBoard()) targetSquares.push_back(targetSquare);
+		}
+	}
+	return targetSquares;
+
 }
 
 WhiteQueen::WhiteQueen() : Queen::Queen(PieceColor::white) {};
@@ -99,7 +127,20 @@ Rook::Rook(PieceColor color) : ChessPiece(color, PieceType::rook) {};
 
 std::vector<Coordinates> Rook::getTargetSquares(Coordinates coordinates) const
 {
-	return std::vector<Coordinates>{};
+	std::vector<Coordinates> targetSquares{};
+	int start_row = coordinates.row;
+	int start_col = coordinates.col;
+
+	for (int i = 0; i < 8; ++i)
+	{
+		if (i != start_col) targetSquares.push_back(Coordinates{ start_row, i });
+	}
+	
+	for (int j = 0; j < 8; ++j)
+	{
+		if (j != start_row) targetSquares.push_back(Coordinates{ j, start_col });
+	}
+	return targetSquares;
 }
 
 WhiteRook::WhiteRook() : Rook::Rook(PieceColor::white) {};
@@ -121,7 +162,33 @@ Bishop::Bishop(PieceColor color) : ChessPiece(color, PieceType::bishop) {};
 
 std::vector<Coordinates> Bishop::getTargetSquares(Coordinates coordinates) const
 {
-	return std::vector<Coordinates>{};
+	std::vector<Coordinates> targetSquares{};
+	int start_row = coordinates.row;
+	int start_col = coordinates.col;
+
+	// Counting column number
+	for (int i = 0; i < 8; ++i)
+	{
+		int colDiff = std::abs(start_col - i);
+		// Counting row number
+		for (int j = start_row - colDiff; j <= start_row + colDiff; j += 2 * colDiff)
+		{
+			Coordinates targetSquare{ j, i };
+			if (targetSquare.isOnBoard()) targetSquares.push_back(targetSquare);
+		}
+	}
+
+	for (int i = 0; i < 8; ++i)
+	{
+		if (i != start_col) targetSquares.push_back(Coordinates{ start_row, i });
+	}
+	
+	for (int j = 0; j < 8; ++j)
+	{
+		if (j != start_row) targetSquares.push_back(Coordinates{ j, start_col });
+	}
+
+	return targetSquares;
 }
 
 WhiteBishop::WhiteBishop() : Bishop::Bishop(PieceColor::white) {};
@@ -143,7 +210,28 @@ Knight::Knight(PieceColor color) : ChessPiece(color, PieceType::knight) {};
 
 std::vector<Coordinates> Knight::getTargetSquares(Coordinates coordinates) const
 {
-	return std::vector<Coordinates>{};
+	std::vector<Coordinates> targetSquares{};
+	int start_row = coordinates.row;
+	int start_col = coordinates.col;
+
+	for (int i = start_col - 2; i <= start_col + 2; i += 4)
+	{
+		for (int j = start_row - 1; j <= start_row + 1; j += 2)
+		{
+			Coordinates targetSquare{ j, i };
+			if (targetSquare.isOnBoard()) targetSquares.push_back(targetSquare);
+		}
+	}
+	
+	for (int i = start_col - 1; i <= start_col + 1; i += 2)
+	{
+		for (int j = start_row - 2; j <= start_row + 2; j += 4)
+		{
+			Coordinates targetSquare{ j, i };
+			if (targetSquare.isOnBoard()) targetSquares.push_back(targetSquare);
+		}
+	}
+	return targetSquares;
 }
 
 
@@ -173,7 +261,22 @@ const std::string WhitePawn::toString() const
 
 std::vector<Coordinates> WhitePawn::getTargetSquares(Coordinates coordinates) const
 {
-	return std::vector<Coordinates>{};
+	std::vector<Coordinates> targetSquares{};
+	int start_row = coordinates.row;
+	int start_col = coordinates.col;
+	
+	if (m_moveCount == 0)
+	{
+		Coordinates targetSquare{ start_col, start_row + 2 };
+		targetSquares.push_back(targetSquare);
+	}
+
+	for (int i = start_col - 1; i <= start_col + 1; ++i)
+	{
+		Coordinates targetSquare{ start_row + 1, i };
+		if (targetSquare.isOnBoard()) targetSquares.push_back(targetSquare);
+	}
+	return targetSquares;
 }
 
 BlackPawn::BlackPawn() : Pawn::Pawn(PieceColor::black) {};
@@ -185,6 +288,21 @@ const std::string BlackPawn::toString() const
 
 std::vector<Coordinates> BlackPawn::getTargetSquares(Coordinates coordinates) const
 {
-	return std::vector<Coordinates>{};
+	std::vector<Coordinates> targetSquares{};
+	int start_row = coordinates.row;
+	int start_col = coordinates.col;
+	
+	if (m_moveCount == 0)
+	{
+		Coordinates targetSquare{ start_col, start_row - 2 };
+		targetSquares.push_back(targetSquare);
+	}
+
+	for (int i = start_col - 1; i <= start_col + 1; ++i)
+	{
+		Coordinates targetSquare{ start_row - 1, i };
+		if (targetSquare.isOnBoard()) targetSquares.push_back(targetSquare);
+	}
+	return targetSquares;
 }
 
