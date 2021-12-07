@@ -194,3 +194,20 @@ void CastleLong::undoMove(Chessboard& chessboard)
 	chessboard.placePiece(m_start, m_chessPiece);
 }
 
+// MoveHistory methods
+MoveHistory::MoveHistory() {}
+
+int MoveHistory::getTurnNumber()
+{
+	return 1 + m_moveHistory.size() / 2;
+}
+
+void MoveHistory::addMove(ChessMove& move)
+{
+	m_moveHistory.push_back(move);
+}
+
+void MoveHistory::removeMove()
+{
+	m_moveHistory.pop_back();
+}

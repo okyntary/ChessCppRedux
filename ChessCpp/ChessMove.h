@@ -54,3 +54,15 @@ public:
 	void applyMove(Chessboard& chessboard);
 	void undoMove(Chessboard& chessboard);
 };
+
+class MoveHistory
+{
+private:
+	std::vector<ChessMove> m_moveHistory{};
+
+public:
+	MoveHistory();
+	int getTurnNumber();
+	void addMove(ChessMove& chessMove);
+	void removeMove();
+};

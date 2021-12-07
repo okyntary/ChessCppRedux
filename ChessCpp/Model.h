@@ -26,6 +26,7 @@ private:
 	std::array<ChessPiece*, 32> m_chessPieces{};
 	Chessboard m_chessboard{};
 	std::vector<ChessMove> m_validMoves;
+	MoveHistory m_moveHistory{};
 	Player currentPlayer{Player::white};
 
 	friend class View;
