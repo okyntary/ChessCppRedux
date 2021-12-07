@@ -6,7 +6,7 @@
 
 class ChessMove
 {
-private:
+protected:
 	ChessPiece* m_chessPiece{ nullptr };
 	const Coordinates m_start;
 	const Coordinates m_end;
@@ -25,7 +25,8 @@ class Promotion : public ChessMove
 private:
 	ChessPiece* m_promotedPiece{ nullptr };
 public:
-	Promotion(ChessPiece* promotedPiece);
+	Promotion(ChessPiece* chessPiece, const Coordinates start, const Coordinates end, const bool isCapture, ChessPiece* capturedPiece,
+			ChessPiece* promotedPiece);
 	void applyMove(Chessboard& chessboard);
 	void undoMove(Chessboard& chessboard);
 };
@@ -33,7 +34,7 @@ public:
 class EnPassant : public ChessMove
 {
 public:
-	EnPassant();
+	EnPassant(ChessPiece* chessPiece, const Coordinates start, const Coordinates end, ChessPiece* capturedPiece);
 	void applyMove(Chessboard& chessboard);
 	void undoMove(Chessboard& chessboard);
 };
@@ -41,7 +42,7 @@ public:
 class CastleShort : public ChessMove
 {
 public:
-	CastleShort();
+	CastleShort(ChessPiece* chessPiece, const Coordinates start, const Coordinates end, ChessPiece* capturedPiece);
 	void applyMove(Chessboard& chessboard);
 	void undoMove(Chessboard& chessboard);
 };
@@ -49,7 +50,7 @@ public:
 class CastleLong : public ChessMove
 {
 public:
-	CastleLong();
+	CastleLong(ChessPiece* chessPiece, const Coordinates start, const Coordinates end, ChessPiece* capturedPiece);
 	void applyMove(Chessboard& chessboard);
 	void undoMove(Chessboard& chessboard);
 };
