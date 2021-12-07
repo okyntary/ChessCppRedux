@@ -7,20 +7,20 @@
 
 enum class PieceColor
 {
-	null,
 	white,
-	black
+	black,
+	null,
 };
 
 enum class PieceType
 {
-	null,
 	king,
 	queen,
 	rook,
 	bishop,
 	knight,
-	pawn
+	pawn,
+	null,
 };
 
 class ChessPiece
@@ -40,6 +40,8 @@ public:
 	void setAsCaptured();
 
 	// Getter methods
+	PieceColor getPieceColor() const;
+	PieceType getPieceType() const;
 	bool hasMoved() const;
 	bool isCaptured() const;
 	virtual const std::string toString() const = 0;

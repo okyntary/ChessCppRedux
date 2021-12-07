@@ -27,6 +27,16 @@ void ChessPiece::setAsCaptured()
 	m_isCaptured = true;
 }
 
+PieceColor ChessPiece::getPieceColor() const
+{
+	return m_color;
+}
+
+PieceType ChessPiece::getPieceType() const
+{
+	return m_type;
+}
+
 bool ChessPiece::hasMoved() const
 {
 	return m_moveCount > 0;

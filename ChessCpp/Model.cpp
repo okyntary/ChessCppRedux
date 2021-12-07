@@ -1,5 +1,7 @@
-#include "Model.h"
+#include <cassert>
 
+
+#include "Model.h"
 #include "Coordinates.h"
 #include "Chessboard.h"
 #include "ChessMove.h"
@@ -197,9 +199,151 @@ void Model::initialize()
 	}
 }
 
+bool Model::hasNoCollision(const ChessPiece& chessPiece, const Coordinates start, const Coordinates end) const
+{
+	PieceColor pieceColor{ chessPiece.getPieceColor() }; 
+	PieceType pieceType{ chessPiece.getPieceType() };
+	switch (pieceType)
+	{
+	case PieceType::king:
+	case PieceType::knight:
+		return !m_chessboard.hasPiece(end) || m_chessboard.getPiece(end).getPieceColor() != pieceColor;
+	case PieceType::queen:
+		return hasNoQueenCollision(chessPiece, start, end);
+	case PieceType::rook:
+		return hasNoRookCollision(chessPiece, start, end);
+	case PieceType::bishop:
+		return hasNoBishopCollision(chessPiece, start, end);
+	case PieceType::pawn:
+		return hasNoPawnCollision(chessPiece, start, end);
+	case PieceType::null:
+	default:
+		return false;
+	}
+}
+
+bool Model::hasNoQueenCollision(const ChessPiece& chessPiece, const Coordinates start, const Coordinates end) const
+{
+	bool onSameRankOrFile{ start.row == end.row || start.col == end.col };
+	bool onSameDiagonal{ abs(start.row - end.row) == abs(start.col - end.col) };
+	if (onSameRankOrFile) return hasNoRookCollision(chessPiece, start, end);
+	if (onSameDiagonal) return hasNoBishopCollision(chessPiece, start, end);
+	return false;
+}
+
+bool Model::hasNoRookCollision(const ChessPiece& chessPiece, const Coordinates start, const Coordinates end) const
+{
+	Coordinates currentCoordinates{ end };
+	// Checks if end square is empty, or if is not empty, then checks if the piece on that square is oppositely colored
+	bool hasNoCollision{ !m_chessboard.hasPiece(end) || m_chessboard.getPiece(end).getPieceColor() != chessPiece.getPieceColor() };
+
+	bool isSameCol{ start.col == end.col };
+	bool isSameRow{ start.row == end.row };
+	assert(isSameRow != isSameCol);
+
+	while (start.row != currentCoordinates.row ^ start.col != currentCoordinates.col)
+	{
+		// hasNoCollision set to false if there is a piece in the current square
+		hasNoCollision = !m_chessboard.hasPiece(currentCoordinates);
+		// If hasNoCollision is false at any point, the function returns false immediately
+		if (!hasNoCollision) return false;
+
+		if (isSameCol)
+		{
+			if (start.row > currentCoordinates.row) ++currentCoordinates.row;
+			else --currentCoordinates.row;
+		}
+		else if (isSameRow)
+		{
+			if (start.col > currentCoordinates.col) ++currentCoordinates.col;
+			else --currentCoordinates.col;
+		}
+	}
+
+	return hasNoCollision;
+}
+
+bool Model::hasNoBishopCollision(const ChessPiece& chessPiece, const Coordinates start, const Coordinates end) const
+{
+	Coordinates currentCoordinates{ end };
+	bool hasNoCollision{ !m_chessboard.hasPiece(end) || m_chessboard.getPiece(end).getPieceColor() != chessPiece.getPieceColor() };
+
+	assert(abs(start.row - end.row) == abs(start.col - end.col));
+
+	while (start.row != currentCoordinates.row && start.col != currentCoordinates.col)
+	{
+		// hasNoCollision set to false if there is a piece in the current square
+		hasNoCollision = !m_chessboard.hasPiece(currentCoordinates);
+		// If hasNoCollision is false at any point, the function returns false immediately
+		if (!hasNoCollision) return false;
+		
+		if (start.row > currentCoordinates.row) ++currentCoordinates.row;
+		else --currentCoordinates.row;
+
+		if (start.col > currentCoordinates.col) ++currentCoordinates.col;
+		else --currentCoordinates.col;
+	}
+	return hasNoCollision;
+}
+
+bool Model::hasNoPawnCollision(const ChessPiece& chessPiece, const Coordinates start, const Coordinates end) const
+{
+	bool isPawnCapture{ start.col != end.col };
+	// If the move is a diagonal pawn capture
+	if (isPawnCapture)
+	{
+		return m_chessboard.hasPiece(end) && m_chessboard.getPiece(end).getPieceColor() != chessPiece.getPieceColor();
+	}
+
+	// If the move is moving two spaces at the start
+	bool isDoubleMove{ static_cast<int>(abs(end.row - start.row)) == 2 };
+	if (isDoubleMove)
+	{
+		// The square between the start and the end
+		Coordinates nextSquare{ (start.row + end.row) / 2, start.col };
+		return !(m_chessboard.hasPiece(nextSquare) || m_chessboard.hasPiece(end));
+	}
+	
+	// Else, the move must be a single move forwards
+	return !m_chessboard.hasPiece(end);
+}
+
+std::vector<ChessMove> Model::generatePlausibleMoves()
+{
+	std::vector<ChessMove> plausibleMoves{};
+	// Loop through all squares of the chessboard
+	for (int i = 0; i < 8; ++i)
+	{
+		for (int j = 0; j < 8; ++j)
+		{
+			// j is the row number, i is the col number
+			Coordinates currentSquare{ j, i };
+			ChessPiece& currentPiece{m_chessboard.getPiece(currentSquare)};
+			// Skip the square if it has no piece, or if its piece is differently-colored from the current player
+			if (!m_chessboard.hasPiece(currentSquare) ||
+				currentPiece.getPieceColor() != static_cast<PieceColor>(m_currentPlayer)) continue;
+
+			std::vector<Coordinates> targetSquares = currentPiece.getTargetSquares(currentSquare);
+
+			for (auto targetSquare : targetSquares)
+			{
+				if (hasNoCollision(currentPiece, currentSquare, targetSquare))
+				{
+					bool isCapture{ m_chessboard.hasPiece(targetSquare) };
+					ChessPiece* capturedPiece{ nullptr };
+					if (isCapture) capturedPiece = &(m_chessboard.getPiece(targetSquare));
+					plausibleMoves.push_back(ChessMove{ &currentPiece, currentSquare, targetSquare, isCapture, capturedPiece});
+					// Todo - account for promotion
+				}
+			}
+		}
+	}
+	return plausibleMoves;
+}
+
 void Model::testMove()
 {
-	ChessMove move1{ m_chessPieces[6], Coordinates{0, 1}, Coordinates{2,2}, false, nullptr };
+	ChessMove move1{ m_chessPieces[6], Coordinates{ 0, 1 }, Coordinates{ 2, 2 }, false, nullptr };
 	move1.applyMove(m_chessboard);
 }
 
@@ -207,6 +351,12 @@ void Model::testUndoMove()
 {
 	ChessMove move1{ m_chessPieces[6], Coordinates{0, 1}, Coordinates{2,2}, false, nullptr };
 	move1.undoMove(m_chessboard);
+}
+
+void Model::testPlausibleMoves()
+{
+	std::vector<ChessMove> plausibleMoves{ generatePlausibleMoves() };
+	plausibleMoves;
 }
 
 void Model::testTargetSquares()

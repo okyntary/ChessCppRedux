@@ -46,6 +46,7 @@ Promotion::Promotion(ChessPiece* chessPiece, const Coordinates start, const Coor
 void Promotion::applyMove(Chessboard& chessboard)
 {
 	chessboard.removePiece(m_start);
+	assert(m_chessPiece->getPieceType() == PieceType::pawn);
 	assert(m_isCapture == chessboard.hasPiece(m_end));
 	assert(m_start.row == 1 || m_start.row == 6);
 	assert(m_end.row == 0 || m_end.row == 7);
@@ -76,10 +77,12 @@ EnPassant::EnPassant(ChessPiece* chessPiece, const Coordinates start, const Coor
 
 void EnPassant::applyMove(Chessboard& chessboard)
 {
+	assert(m_chessPiece->getPieceType() == PieceType::pawn);
 	assert(&(chessboard.getPiece(m_end)) != m_capturedPiece);
 	assert(m_start.row == 3 || m_start.row == 4);
 
 	Coordinates capturedPawnSquare{m_start.row, m_end.col};
+	assert(m_capturedPiece->getPieceType() == PieceType::pawn);
 	assert(&(chessboard.getPiece(capturedPawnSquare)) == m_capturedPiece);
 	chessboard.removePiece(capturedPawnSquare);
 	m_capturedPiece->setAsCaptured();
@@ -107,6 +110,7 @@ CastleShort::CastleShort(ChessPiece* chessPiece, const Coordinates start, const 
 void CastleShort::applyMove(Chessboard& chessboard)
 {
 	// Extra checks to make sure that the castling is legal
+	assert(m_capturedPiece->getPieceType() == PieceType::king);
 	assert(!m_chessPiece->hasMoved());
 	assert(m_start.col == 4);
 	assert(m_end.col == 6);
@@ -118,6 +122,7 @@ void CastleShort::applyMove(Chessboard& chessboard)
 	assert(!chessboard.getPiece(castlingRookSquare).hasMoved());
 	assert(!chessboard.hasPiece(targetRookSquare));
 	ChessPiece* castlingRook(&(chessboard.getPiece(castlingRookSquare)));
+	assert(castlingRook->getPieceType() == PieceType::rook);
 	
 	// Moving the king
 	chessboard.removePiece(m_start);
@@ -154,6 +159,7 @@ CastleLong::CastleLong(ChessPiece* chessPiece, const Coordinates start, const Co
 void CastleLong::applyMove(Chessboard& chessboard)
 {
 	// Extra checks to make sure that the castling is legal
+	assert(m_chessPiece->getPieceType() == PieceType::king);
 	assert(!m_chessPiece->hasMoved());
 	assert(m_start.col == 4);
 	assert(m_end.col == 2);
@@ -165,6 +171,7 @@ void CastleLong::applyMove(Chessboard& chessboard)
 	assert(!chessboard.getPiece(castlingRookSquare).hasMoved());
 	assert(!chessboard.hasPiece(targetRookSquare));
 	ChessPiece* castlingRook(&(chessboard.getPiece(castlingRookSquare)));
+	assert(castlingRook->getPieceType() == PieceType::rook);
 	
 	// Moving the king
 	chessboard.removePiece(m_start);

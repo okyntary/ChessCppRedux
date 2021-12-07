@@ -27,7 +27,7 @@ private:
 	Chessboard m_chessboard{};
 	std::vector<ChessMove> m_validMoves;
 	MoveHistory m_moveHistory{};
-	Player currentPlayer{Player::white};
+	Player m_currentPlayer{Player::white};
 
 	friend class View;
 
@@ -41,8 +41,21 @@ public:
 	// Methods related to the actual model
 	void initialize();
 
+	// Collision methods - all return true if the moving from the start to the end Coordinates is feasible given
+	// the chessboard
+	bool hasNoCollision(const ChessPiece& chessPiece, const Coordinates start, const Coordinates end) const;
+	bool hasNoQueenCollision(const ChessPiece& chessPiece, const Coordinates start, const Coordinates end) const;
+	bool hasNoRookCollision(const ChessPiece& chessPiece, const Coordinates start, const Coordinates end) const;
+	bool hasNoBishopCollision(const ChessPiece& chessPiece, const Coordinates start, const Coordinates end) const;
+	bool hasNoPawnCollision(const ChessPiece& chessPiece, const Coordinates start, const Coordinates end) const;
+
+	// Move-generating methods
+	std::vector<ChessMove> generatePlausibleMoves();
+
+	// Miscellaneous test methods
 	void testMove();
 	void testUndoMove();
+	void testPlausibleMoves();
 
 	void testTargetSquares();
 };
