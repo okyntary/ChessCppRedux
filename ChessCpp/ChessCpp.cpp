@@ -15,7 +15,7 @@ int main()
     model.setView(&view);
     Controller controller(&model, &view);
 
-    model.testPlausibleMoves();
+    model.testMoves();
 
     bool isExit = false;
     while (!isExit)

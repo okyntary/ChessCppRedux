@@ -47,6 +47,11 @@ bool ChessPiece::isCaptured() const
 	return m_isCaptured;
 }
 
+bool ChessPiece::isCorrectPiece(PieceColor color, PieceType type) const
+{
+	return m_color == color && m_type == type;
+}
+
 // NullPiece methods
 NullPiece::NullPiece() : ChessPiece(PieceColor::null, PieceType::null) {};
 
@@ -104,7 +109,7 @@ std::vector<Coordinates> Queen::getTargetSquares(Coordinates coordinates) const
 	int start_col = coordinates.col;
 
 	// Counting column number
-	for (int i = 0; i < 8; ++i)
+	for (int i{ 0 }; i < 8; ++i)
 	{
 		int colDiff = std::abs(start_col - i);
 		if (colDiff == 0) continue;
@@ -118,12 +123,12 @@ std::vector<Coordinates> Queen::getTargetSquares(Coordinates coordinates) const
 		}
 	}
 
-	for (int i = 0; i < 8; ++i)
+	for (int i{ 0 }; i < 8; ++i)
 	{
 		if (i != start_col) targetSquares.push_back(Coordinates{ start_row, i });
 	}
 	
-	for (int j = 0; j < 8; ++j)
+	for (int j{ 0 }; j < 8; ++j)
 	{
 		if (j != start_row) targetSquares.push_back(Coordinates{ j, start_col });
 	}
@@ -155,12 +160,12 @@ std::vector<Coordinates> Rook::getTargetSquares(Coordinates coordinates) const
 	int start_row = coordinates.row;
 	int start_col = coordinates.col;
 
-	for (int i = 0; i < 8; ++i)
+	for (int i{ 0 }; i < 8; ++i)
 	{
 		if (i != start_col) targetSquares.push_back(Coordinates{ start_row, i });
 	}
 	
-	for (int j = 0; j < 8; ++j)
+	for (int j{ 0 }; j < 8; ++j)
 	{
 		if (j != start_row) targetSquares.push_back(Coordinates{ j, start_col });
 	}
@@ -191,7 +196,7 @@ std::vector<Coordinates> Bishop::getTargetSquares(Coordinates coordinates) const
 	int start_col = coordinates.col;
 
 	// Counting column number
-	for (int i = 0; i < 8; ++i)
+	for (int i{ 0 }; i < 8; ++i)
 	{
 		int colDiff = std::abs(start_col - i);
 		if (colDiff == 0) continue;

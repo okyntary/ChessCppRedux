@@ -44,6 +44,7 @@ public:
 	PieceType getPieceType() const;
 	bool hasMoved() const;
 	bool isCaptured() const;
+	bool isCorrectPiece(PieceColor color, PieceType type) const;
 	virtual const std::string toString() const = 0;
 	virtual std::vector<Coordinates> getTargetSquares(Coordinates coordinates) const = 0;
 };

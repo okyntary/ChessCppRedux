@@ -19,7 +19,7 @@ void ChessMove::applyMove(Chessboard& chessboard)
 	assert(m_isCapture == chessboard.hasPiece(m_end));
 	if (m_isCapture)
 	{
-		assert(!m_capturedPiece);
+		assert(m_capturedPiece);
 		assert(m_capturedPiece == &(chessboard.getPiece(m_end)));
 		chessboard.removePiece(m_end);
 		m_capturedPiece->setAsCaptured();
@@ -37,6 +37,11 @@ void ChessMove::undoMove(Chessboard& chessboard)
 		chessboard.placePiece(m_end, m_capturedPiece);
 	}
 	chessboard.placePiece(m_start, m_chessPiece);
+}
+
+Coordinates ChessMove::getEnd()
+{
+	return m_end;
 }
 
 // Promotion methods
@@ -214,7 +219,7 @@ void MoveHistory::addMove(ChessMove& move)
 	m_moveHistory.push_back(move);
 }
 
-void MoveHistory::removeMove()
+void MoveHistory::popMove()
 {
 	m_moveHistory.pop_back();
 }

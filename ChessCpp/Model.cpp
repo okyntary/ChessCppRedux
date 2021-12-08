@@ -1,6 +1,5 @@
 #include <cassert>
 
-
 #include "Model.h"
 #include "Coordinates.h"
 #include "Chessboard.h"
@@ -60,7 +59,7 @@ void Model::initialize()
 	static BlackPawn bp7{};
 	static BlackPawn bp8{};
 
-	for (int i = 0; i < 32; ++i)
+	for (int i{ 0 }; i < 32; ++i)
 	{
 		switch (i)
 		{
@@ -228,7 +227,7 @@ ChessPiece& Model::getPromotionPiece(PieceColor color, PieceType type)
 			break;
 		}
 	}
-	else if (color == PieceColor::white)
+	else if (color == PieceColor::black)
 	{
 		switch (type)
 		{
@@ -245,6 +244,25 @@ ChessPiece& Model::getPromotionPiece(PieceColor color, PieceType type)
 		}
 	}
 	return nullPiece;
+}
+
+Player Model::getOtherPlayer(Player player)
+{
+	switch (player)
+	{
+	case Player::white:
+		return Player::black;
+	case Player::black:
+		return Player::white;
+	default:
+		return Player::null;
+	}
+	
+}
+
+void Model::swapCurrentPlayer()
+{
+	m_currentPlayer = getOtherPlayer(m_currentPlayer);
 }
 
 bool Model::hasNoCollision(const ChessPiece& chessPiece, const Coordinates start, const Coordinates end) const
@@ -281,15 +299,26 @@ bool Model::hasNoQueenCollision(const ChessPiece& chessPiece, const Coordinates 
 
 bool Model::hasNoRookCollision(const ChessPiece& chessPiece, const Coordinates start, const Coordinates end) const
 {
-	Coordinates currentCoordinates{ end };
-	// Checks if end square is empty, or if is not empty, then checks if the piece on that square is oppositely colored
-	bool hasNoCollision{ !m_chessboard.hasPiece(end) || m_chessboard.getPiece(end).getPieceColor() != chessPiece.getPieceColor() };
-
 	bool isSameCol{ start.col == end.col };
 	bool isSameRow{ start.row == end.row };
 	assert(isSameRow != isSameCol);
 
-	while (start.row != currentCoordinates.row ^ start.col != currentCoordinates.col)
+	Coordinates currentCoordinates{ end };
+	// Checks if end square is empty, or if is not empty, then checks if the piece on that square is oppositely colored
+	bool hasNoCollision{ !m_chessboard.hasPiece(end) || m_chessboard.getPiece(end).getPieceColor() != chessPiece.getPieceColor() };
+
+	if (isSameCol)
+	{
+		if (start.row > currentCoordinates.row) ++currentCoordinates.row;
+		else --currentCoordinates.row;
+	}
+	else if (isSameRow)
+	{
+		if (start.col > currentCoordinates.col) ++currentCoordinates.col;
+		else --currentCoordinates.col;
+	}
+
+	while ((start.row != currentCoordinates.row) ^ (start.col != currentCoordinates.col))
 	{
 		// hasNoCollision set to false if there is a piece in the current square
 		hasNoCollision = !m_chessboard.hasPiece(currentCoordinates);
@@ -313,10 +342,16 @@ bool Model::hasNoRookCollision(const ChessPiece& chessPiece, const Coordinates s
 
 bool Model::hasNoBishopCollision(const ChessPiece& chessPiece, const Coordinates start, const Coordinates end) const
 {
+	assert(abs(start.row - end.row) == abs(start.col - end.col));
+
 	Coordinates currentCoordinates{ end };
 	bool hasNoCollision{ !m_chessboard.hasPiece(end) || m_chessboard.getPiece(end).getPieceColor() != chessPiece.getPieceColor() };
 
-	assert(abs(start.row - end.row) == abs(start.col - end.col));
+	if (start.row > currentCoordinates.row) ++currentCoordinates.row;
+	else --currentCoordinates.row;
+
+	if (start.col > currentCoordinates.col) ++currentCoordinates.col;
+	else --currentCoordinates.col;
 
 	while (start.row != currentCoordinates.row && start.col != currentCoordinates.col)
 	{
@@ -358,18 +393,23 @@ bool Model::hasNoPawnCollision(const ChessPiece& chessPiece, const Coordinates s
 
 std::vector<ChessMove> Model::generatePlausibleMoves()
 {
+	return generatePlausibleMoves(m_currentPlayer);
+}
+
+std::vector<ChessMove> Model::generatePlausibleMoves(Player player)
+{
 	std::vector<ChessMove> plausibleMoves{};
 	// Loop through all squares of the chessboard
-	for (int i = 0; i < 8; ++i)
+	for (int i{ 0 }; i < 8; ++i)
 	{
-		for (int j = 0; j < 8; ++j)
+		for (int j{ 0 }; j < 8; ++j)
 		{
 			// j is the row number, i is the col number
 			Coordinates currentSquare{ j, i };
 			ChessPiece& currentPiece{m_chessboard.getPiece(currentSquare)};
 			// Skip the square if it has no piece, or if its piece is differently-colored from the current player
 			if (!m_chessboard.hasPiece(currentSquare) ||
-				currentPiece.getPieceColor() != static_cast<PieceColor>(m_currentPlayer)) continue;
+				currentPiece.getPieceColor() != static_cast<PieceColor>(player)) continue;
 
 			std::vector<Coordinates> targetSquares = currentPiece.getTargetSquares(currentSquare);
 
@@ -382,19 +422,138 @@ std::vector<ChessMove> Model::generatePlausibleMoves()
 					if (isCapture) capturedPiece = &(m_chessboard.getPiece(targetSquare));
 					// Account for promotion in generatePlausibleMoves(), because accounting for it later would require that I
 					// replace existing plausibleMoves
-					bool isPawn = currentPiece.getPieceType() == PieceType::pawn;
-					bool isOnSeventhRank = currentPiece.getPieceColor() == PieceColor::white
-							? currentSquare.row == 6 : currentSquare.row == 1;
+					PieceColor pieceColor = currentPiece.getPieceColor();
+					PieceType pieceType = currentPiece.getPieceType();
+					bool isPawn = pieceType == PieceType::pawn;
+					bool isOnSeventhRank = pieceColor == PieceColor::white ? currentSquare.row == 6 : currentSquare.row == 1;
 					if (isPawn && isOnSeventhRank)
 					{
-						plausibleMoves.push_back(Promotion);
+						Promotion queenPromotion{&currentPiece, currentSquare, targetSquare, isCapture, capturedPiece,
+							&getPromotionPiece(pieceColor, PieceType::queen) };
+						Promotion rookPromotion{&currentPiece, currentSquare, targetSquare, isCapture, capturedPiece,
+							&getPromotionPiece(pieceColor, PieceType::rook) };
+						Promotion bishopPromotion{&currentPiece, currentSquare, targetSquare, isCapture, capturedPiece,
+							&getPromotionPiece(pieceColor, PieceType::bishop) };
+						Promotion knightPromotion{&currentPiece, currentSquare, targetSquare, isCapture, capturedPiece,
+							&getPromotionPiece(pieceColor, PieceType::knight) };
+
+						plausibleMoves.push_back(queenPromotion);
+						plausibleMoves.push_back(rookPromotion);
+						plausibleMoves.push_back(bishopPromotion);
+						plausibleMoves.push_back(knightPromotion);
 					}
-					plausibleMoves.push_back(ChessMove{ &currentPiece, currentSquare, targetSquare, isCapture, capturedPiece});
+					else
+					{
+						plausibleMoves.push_back(ChessMove{ &currentPiece, currentSquare, targetSquare, isCapture, capturedPiece });
+					}
 				}
 			}
 		}
 	}
 	return plausibleMoves;
+}
+
+std::vector<ChessMove> Model::generateValidMoves()
+{
+	std::vector<ChessMove> validMoves{};
+	std::vector<ChessMove> plausibleMoves{ generatePlausibleMoves() };
+	
+	// Account for castling
+	int castlingRow{ m_currentPlayer == Player::white ? 0 : 7 };
+	PieceColor currentPlayer{ static_cast<PieceColor>(m_currentPlayer) };
+
+	ChessPiece& king{ m_chessboard.getPiece({castlingRow, 4}) };
+	bool kingHasNotMoved{king.isCorrectPiece(currentPlayer, PieceType::king) && !king.hasMoved()};
+
+	ChessPiece& kingRook{ m_chessboard.getPiece({castlingRow, 7}) };
+	bool kingRookHasNotMoved{kingRook.isCorrectPiece(currentPlayer, PieceType::rook) && !kingRook.hasMoved()};
+
+	ChessPiece& queenRook{ m_chessboard.getPiece({castlingRow, 0}) };
+	bool queenRookHasNotMoved{queenRook.isCorrectPiece(currentPlayer, PieceType::rook) && !queenRook.hasMoved()};
+
+	if (kingHasNotMoved && kingRookHasNotMoved && queenRookHasNotMoved)
+	{
+		
+	}
+	
+	// Account for en passant
+	for (Coordinates currentSquare{ m_currentPlayer == Player::white ? 4 : 3, 0}; currentSquare.col < 8; ++currentSquare.col)
+	{
+		if (!m_chessboard.hasPiece(currentSquare)) continue;
+
+		ChessPiece& currentPiece{ m_chessboard.getPiece(currentSquare) };
+		// Check if there is a pawn of the right color in the square
+		// if ()
+		{
+			// Check if it is adjacent to a pawn of the opposite color which has just moved
+			
+		}
+	}
+	
+	for (auto& plausibleMove : plausibleMoves)
+	{
+		Player currentPlayer{ m_currentPlayer };
+		simulateMove(plausibleMove);
+		if (!isChecked(currentPlayer)) validMoves.push_back(plausibleMove);
+		undoMove(plausibleMove);
+	}
+	return validMoves;
+}
+
+Coordinates Model::getPlayerKingSquare(Player player)
+{
+	Coordinates playerKingSquare{ -1, -1 };
+	for (int i{ 0 }; i < 8; ++i)
+	{
+		for (int j{ 0 }; j < 8; ++j)
+		{
+			Coordinates currentSquare{ j ,i };
+			if (m_chessboard.hasPiece(currentSquare))
+			{
+				ChessPiece& currentPiece{ m_chessboard.getPiece(currentSquare) };
+				if (currentPiece.isCorrectPiece(static_cast<PieceColor>(player), PieceType::king)) return currentSquare;
+			}
+		}
+	}
+	return playerKingSquare;
+}
+
+bool Model::isChecked()
+{
+	return isChecked(m_currentPlayer);
+}
+
+bool Model::isChecked(Player player)
+{
+	std::vector<ChessMove> plausibleOpponentMoves{ generatePlausibleMoves(getOtherPlayer(player)) };
+	Coordinates kingSquare{ getPlayerKingSquare(player) };
+	for (auto& plausibleMove : plausibleOpponentMoves)
+	{
+		Coordinates endSquare{ plausibleMove.getEnd() };
+		if (endSquare.row == kingSquare.row && endSquare.col == kingSquare.col) return true;
+	}
+	return false;
+}
+
+void Model::simulateMove(ChessMove& move)
+{
+	swapCurrentPlayer();
+	m_moveHistory.addMove(move);
+	move.applyMove(m_chessboard);
+}
+
+void Model::undoMove(ChessMove& move)
+{
+	move.undoMove(m_chessboard);
+	m_moveHistory.popMove();
+	swapCurrentPlayer();
+}
+
+void Model::applyMove(ChessMove& move)
+{
+	simulateMove(move);
+	updateView();
+	// Todo: generateValidMoves() for new board state
 }
 
 void Model::testMove()
@@ -409,59 +568,88 @@ void Model::testUndoMove()
 	move1.undoMove(m_chessboard);
 }
 
+void Model::testMoves()
+{
+	std::cout << isChecked() << '\n';
+	ChessMove move1{ m_chessPieces[12], Coordinates{1, 4}, Coordinates{3, 4}, false, nullptr };
+	applyMove(move1);
+
+	std::cout << isChecked() << '\n';
+	ChessMove move2{ m_chessPieces[27], Coordinates{6, 3}, Coordinates{5, 3}, false, nullptr };
+	applyMove(move2);
+
+	std::cout << isChecked() << '\n';
+	ChessMove move3{ m_chessPieces[5], Coordinates{0, 5}, Coordinates{4, 1}, false, nullptr };
+	applyMove(move3);
+
+	std::cout << isChecked() << '\n';
+	ChessMove move4{ m_chessPieces[26], Coordinates{6, 2}, Coordinates{5, 2}, false, nullptr };
+	applyMove(move4);
+
+	std::cout << isChecked() << '\n';
+	ChessMove move5{ m_chessPieces[5], Coordinates{4, 1}, Coordinates{5, 2}, true, m_chessPieces[26] };
+	applyMove(move5);
+
+	std::cout << isChecked() << '\n';
+	ChessMove move6{ m_chessPieces[17], Coordinates{7, 3}, Coordinates{6, 3}, false, nullptr };
+	applyMove(move6);
+}
+
 void Model::testPlausibleMoves()
 {
-	std::vector<ChessMove> plausibleMoves{ generatePlausibleMoves() };
-	plausibleMoves;
+	std::vector<ChessMove> plausibleMovesWhite{ generatePlausibleMoves() };
+	std::vector<ChessMove> plausibleMovesBlack{ generatePlausibleMoves(Player::black) };
+	plausibleMovesWhite;
+	plausibleMovesBlack;
 }
 
 void Model::testTargetSquares()
 {
 	std::vector<Coordinates> targetSquares1 = m_chessPieces[6]->getTargetSquares(Coordinates{ 0, 1 });
 	std::cout << "Knight at b1:\n";
-	for (int i = 0; i < targetSquares1.size(); ++i)
+	for (int i{ 0 }; i < targetSquares1.size(); ++i)
 	{
 		std::cout << "(" << targetSquares1.at(i).row << ", " << targetSquares1.at(i).col << ")\n";
 	}
 
 	std::cout << "Rook at a1:\n";
 	std::vector<Coordinates> targetSquares2 = m_chessPieces[2]->getTargetSquares(Coordinates{ 0, 0 });
-	for (int i = 0; i < targetSquares2.size(); ++i)
+	for (int i{ 0 }; i < targetSquares2.size(); ++i)
 	{
 		std::cout << "(" << targetSquares2.at(i).row << ", " << targetSquares2.at(i).col << ")\n";
 	}
 
 	std::cout << "Bishop at c1:\n";
 	std::vector<Coordinates> targetSquares3 = m_chessPieces[4]->getTargetSquares(Coordinates{ 0, 2 });
-	for (int i = 0; i < targetSquares3.size(); ++i)
+	for (int i{ 0 }; i < targetSquares3.size(); ++i)
 	{
 		std::cout << "(" << targetSquares3.at(i).row << ", " << targetSquares3.at(i).col << ")\n";
 	}
 
 	std::cout << "Queen at d1:\n";
 	std::vector<Coordinates> targetSquares4 = m_chessPieces[1]->getTargetSquares(Coordinates{ 0, 3 });
-	for (int i = 0; i < targetSquares4.size(); ++i)
+	for (int i{ 0 }; i < targetSquares4.size(); ++i)
 	{
 		std::cout << "(" << targetSquares4.at(i).row << ", " << targetSquares4.at(i).col << ")\n";
 	}
 
 	std::cout << "King at e1:\n";
 	std::vector<Coordinates> targetSquares5 = m_chessPieces[0]->getTargetSquares(Coordinates{ 0, 4 });
-	for (int i = 0; i < targetSquares5.size(); ++i)
+	for (int i{ 0 }; i < targetSquares5.size(); ++i)
 	{
 		std::cout << "(" << targetSquares5.at(i).row << ", " << targetSquares5.at(i).col << ")\n";
 	}
 
 	std::cout << "Pawn at h2:\n";
 	std::vector<Coordinates> targetSquares6 = m_chessPieces[15]->getTargetSquares(Coordinates{ 1, 7 });
-	for (int i = 0; i < targetSquares6.size(); ++i)
+	for (int i{ 0 }; i < targetSquares6.size(); ++i)
 	{
 		std::cout << "(" << targetSquares6.at(i).row << ", " << targetSquares6.at(i).col << ")\n";
 	}
 
 	std::cout << "Pawn at d7:\n";
 	std::vector<Coordinates> targetSquares7 = m_chessPieces[27]->getTargetSquares(Coordinates{ 6, 3 });
-	for (int i = 0; i < targetSquares7.size(); ++i)
+	for (int i{ 0 }; i < targetSquares7.size(); ++i)
 	{
 		std::cout << "(" << targetSquares7.at(i).row << ", " << targetSquares7.at(i).col << ")\n";
 	}

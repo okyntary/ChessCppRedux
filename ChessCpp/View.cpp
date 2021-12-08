@@ -86,9 +86,9 @@ void View::update()
 void View::updateUnflippedSmallCoordless()
 {
 	m_display = "";
-	for (int i = 7; i >= 0; --i)
+	for (int i{ 7 }; i >= 0; --i)
 	{
-		for (int j = 0; j < 8; ++j)
+		for (int j{ 0 }; j < 8; ++j)
 		{
 			bool hasPiece = m_model->m_chessboard.hasPiece(Coordinates{ i, j });
 			if (hasPiece)
@@ -108,9 +108,9 @@ void View::updateUnflippedSmallCoordful()
 {
 	char currChar{ '8' };
 	m_display = "";
-	for (int i = 7; i >= 0; --i)
+	for (int i{ 7 }; i >= 0; --i)
 	{
-		for (int j = 0; j < 8; ++j)
+		for (int j{ 0 }; j < 8; ++j)
 		{
 			bool hasPiece = m_model->m_chessboard.hasPiece(Coordinates{ i, j });
 			if (hasPiece)
@@ -131,9 +131,9 @@ void View::updateUnflippedSmallCoordful()
 void View::updateFlippedSmallCoordless()
 {
 	m_display = "";
-	for (int i = 0; i < 8; ++i)
+	for (int i{ 0 }; i < 8; ++i)
 	{
-		for (int j = 7; j >= 0; --j)
+		for (int j{ 7 }; j >= 0; --j)
 		{
 			bool hasPiece = m_model->m_chessboard.hasPiece(Coordinates{ i, j });
 			if (hasPiece)
@@ -153,9 +153,9 @@ void View::updateFlippedSmallCoordful()
 {
 	char currChar { '1' };
 	m_display = "";
-	for (int i = 0; i < 8; ++i)
+	for (int i{ 0 }; i < 8; ++i)
 	{
-		for (int j = 7; j >= 0; --j)
+		for (int j{ 7 }; j >= 0; --j)
 		{
 			bool hasPiece = m_model->m_chessboard.hasPiece(Coordinates{ i, j });
 			if (hasPiece)
@@ -176,9 +176,9 @@ void View::updateFlippedSmallCoordful()
 void View::updateUnflippedMediumCoordless()
 {
 	m_display = mediumUpperLineBreak;
-	for (int i = 7; i >= 0; --i)
+	for (int i{ 7 }; i >= 0; --i)
 	{
-		for (int j = 0; j < 8; ++j)
+		for (int j{ 0 }; j < 8; ++j)
 		{
 			bool hasPiece = m_model->m_chessboard.hasPiece(Coordinates{ i, j });
 			if (hasPiece)
@@ -199,9 +199,9 @@ void View::updateUnflippedMediumCoordful()
 {
 	m_display = mediumUpperLineBreak;
 	char currChar{ '8' };
-	for (int i = 7; i >= 0; --i)
+	for (int i{ 7 }; i >= 0; --i)
 	{
-		for (int j = 0; j < 8; ++j)
+		for (int j{ 0 }; j < 8; ++j)
 		{
 			bool hasPiece = m_model->m_chessboard.hasPiece(Coordinates{ i, j });
 			if (hasPiece)
@@ -223,9 +223,9 @@ void View::updateUnflippedMediumCoordful()
 void View::updateFlippedMediumCoordless()
 {
 	m_display = mediumUpperLineBreak;
-	for (int i = 0; i < 8; ++i)
+	for (int i{ 0 }; i < 8; ++i)
 	{
-		for (int j = 7; j >= 0; --j)
+		for (int j{ 7 }; j >= 0; --j)
 		{
 			bool hasPiece = m_model->m_chessboard.hasPiece(Coordinates{ i, j });
 			if (hasPiece)
@@ -246,9 +246,9 @@ void View::updateFlippedMediumCoordful()
 {
 	m_display = mediumUpperLineBreak;
 	char currChar{ '1' };
-	for (int i = 0; i < 8; ++i)
+	for (int i{ 0 }; i < 8; ++i)
 	{
-		for (int j = 7; j >= 0; --j)
+		for (int j{ 7 }; j >= 0; --j)
 		{
 			bool hasPiece = m_model->m_chessboard.hasPiece(Coordinates{ i, j });
 			if (hasPiece)
@@ -270,9 +270,9 @@ void View::updateFlippedMediumCoordful()
 void View::updateUnflippedLargeCoordless()
 {
 	m_display = largeUpperLineBreak;
-	for (int i = 7; i >= 0; --i)
+	for (int i{ 7 }; i >= 0; --i)
 	{
-		for (int j = 0; j < 8; ++j)
+		for (int j{ 0 }; j < 8; ++j)
 		{
 			bool hasPiece = m_model->m_chessboard.hasPiece(Coordinates{ i, j });
 			if (hasPiece)
@@ -293,9 +293,9 @@ void View::updateUnflippedLargeCoordful()
 {
 	m_display = largeUpperLineBreak;
 	char currChar{ '8' };
-	for (int i = 7; i >= 0; --i)
+	for (int i{ 7 }; i >= 0; --i)
 	{
-		for (int j = 0; j < 8; ++j)
+		for (int j{ 0 }; j < 8; ++j)
 		{
 			bool hasPiece = m_model->m_chessboard.hasPiece(Coordinates{ i, j });
 			if (hasPiece)
@@ -317,9 +317,9 @@ void View::updateUnflippedLargeCoordful()
 void View::updateFlippedLargeCoordless()
 {
 	m_display = largeUpperLineBreak;
-	for (int i = 0; i < 8; ++i)
+	for (int i{ 0 }; i < 8; ++i)
 	{
-		for (int j = 7; j >= 0; --j)
+		for (int j{ 7 }; j >= 0; --j)
 		{
 			bool hasPiece = m_model->m_chessboard.hasPiece(Coordinates{ i, j });
 			if (hasPiece)
@@ -340,9 +340,9 @@ void View::updateFlippedLargeCoordful()
 {
 	m_display = largeUpperLineBreak;
 	char currChar{ '1' };
-	for (int i = 0; i < 8; ++i)
+	for (int i{ 0 }; i < 8; ++i)
 	{
-		for (int j = 7; j >= 0; --j)
+		for (int j{ 7 }; j >= 0; --j)
 		{
 			bool hasPiece = m_model->m_chessboard.hasPiece(Coordinates{ i, j });
 			if (hasPiece)

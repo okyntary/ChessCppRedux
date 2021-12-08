@@ -18,6 +18,7 @@ public:
 	virtual void applyMove(Chessboard& chessboard);
 	// Can only be done right after apply move is done
 	virtual void undoMove(Chessboard& chessboard);
+	Coordinates getEnd();
 };
 
 class Promotion : public ChessMove
@@ -64,5 +65,5 @@ public:
 	MoveHistory();
 	int getTurnNumber();
 	void addMove(ChessMove& chessMove);
-	void removeMove();
+	void popMove();
 };
