@@ -199,6 +199,54 @@ void Model::initialize()
 	}
 }
 
+ChessPiece& Model::getPromotionPiece(PieceColor color, PieceType type)
+{
+	// This isn't the best way to handle promoted pieces, but I'm not comfortable enough with smart pointers to use them just yet
+	static NullPiece nullPiece{};
+	static WhiteQueen promotedWhiteQueen{};
+	static WhiteRook promotedWhiteRook{};
+	static WhiteBishop promotedWhiteBishop{};
+	static WhiteKnight promotedWhiteKnight{};
+	static BlackQueen promotedBlackQueen{};
+	static BlackRook promotedBlackRook{};
+	static BlackBishop promotedBlackBishop{};
+	static BlackKnight promotedBlackKnight{};
+
+	if (color == PieceColor::white)
+	{
+		switch (type)
+		{
+		case PieceType::queen:
+			return promotedWhiteQueen;
+		case PieceType::rook:
+			return promotedWhiteRook;
+		case PieceType::bishop:
+			return promotedWhiteBishop;
+		case PieceType::knight:
+			return promotedWhiteKnight;
+		default:
+			break;
+		}
+	}
+	else if (color == PieceColor::white)
+	{
+		switch (type)
+		{
+		case PieceType::queen:
+			return promotedBlackQueen;
+		case PieceType::rook:
+			return promotedBlackRook;
+		case PieceType::bishop:
+			return promotedBlackBishop;
+		case PieceType::knight:
+			return promotedBlackKnight;
+		default:
+			break;
+		}
+	}
+	return nullPiece;
+}
+
 bool Model::hasNoCollision(const ChessPiece& chessPiece, const Coordinates start, const Coordinates end) const
 {
 	PieceColor pieceColor{ chessPiece.getPieceColor() }; 
@@ -332,8 +380,16 @@ std::vector<ChessMove> Model::generatePlausibleMoves()
 					bool isCapture{ m_chessboard.hasPiece(targetSquare) };
 					ChessPiece* capturedPiece{ nullptr };
 					if (isCapture) capturedPiece = &(m_chessboard.getPiece(targetSquare));
+					// Account for promotion in generatePlausibleMoves(), because accounting for it later would require that I
+					// replace existing plausibleMoves
+					bool isPawn = currentPiece.getPieceType() == PieceType::pawn;
+					bool isOnSeventhRank = currentPiece.getPieceColor() == PieceColor::white
+							? currentSquare.row == 6 : currentSquare.row == 1;
+					if (isPawn && isOnSeventhRank)
+					{
+						plausibleMoves.push_back(Promotion);
+					}
 					plausibleMoves.push_back(ChessMove{ &currentPiece, currentSquare, targetSquare, isCapture, capturedPiece});
-					// Todo - account for promotion
 				}
 			}
 		}

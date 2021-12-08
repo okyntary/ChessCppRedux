@@ -40,6 +40,7 @@ public:
 
 	// Methods related to the actual model
 	void initialize();
+	ChessPiece& getPromotionPiece(PieceColor color, PieceType type);
 
 	// Collision methods - all return true if the moving from the start to the end Coordinates is feasible given
 	// the chessboard
