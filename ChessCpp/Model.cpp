@@ -465,7 +465,6 @@ std::vector<ChessMove> Model::generatePlausibleMoves(Player player)
 std::vector<ChessMove> Model::generateValidMoves()
 {
 	std::vector<ChessMove> validMoves{};
-	std::vector<ChessMove> plausibleMoves{ generatePlausibleMoves() };
 	
 	// Account for castling
 	bool isCurrentlyChecked{ isChecked() };
@@ -474,13 +473,16 @@ std::vector<ChessMove> Model::generateValidMoves()
 
 	Coordinates kingSquare{ castlingRow, 4 };
 	ChessPiece& king{ m_chessboard.getPiece(kingSquare) };
-	bool kingHasNotMoved{king.isCorrectPiece(currentPlayer, PieceType::king) && !king.hasMoved()};
+	bool kingHasNotMoved{m_chessboard.hasPiece(kingSquare) && king.isCorrectPiece(currentPlayer, PieceType::king) && !king.hasMoved()};
 
 	ChessPiece& kingRook{ m_chessboard.getPiece({castlingRow, 7}) };
-	bool kingRookHasNotMoved{kingRook.isCorrectPiece(currentPlayer, PieceType::rook) && !kingRook.hasMoved()};
+	bool kingRookHasNotMoved{ m_chessboard.hasPiece({ castlingRow, 7 }) && kingRook.isCorrectPiece(currentPlayer, PieceType::rook) && !kingRook.hasMoved()
+};
 
 	ChessPiece& queenRook{ m_chessboard.getPiece({castlingRow, 0}) };
-	bool queenRookHasNotMoved{queenRook.isCorrectPiece(currentPlayer, PieceType::rook) && !queenRook.hasMoved()};
+	bool queenRookHasNotMoved{ m_chessboard.hasPiece({castlingRow, 0}) && queenRook.isCorrectPiece(currentPlayer, PieceType::rook) && !queenRook.hasMoved() };
+
+	std::vector<ChessMove> opponentPlausibleMoves{ generatePlausibleMoves(getOtherPlayer(m_currentPlayer)) };
 
 	// Check if short castling is possible
 	if (!isCurrentlyChecked && kingHasNotMoved && kingRookHasNotMoved)
@@ -493,7 +495,7 @@ std::vector<ChessMove> Model::generateValidMoves()
 			bool isSafeToCastle{ true };
 
 			// Check if any square between king and its final destination is under attack
-			for (auto& plausibleMove : plausibleMoves)
+			for (auto& plausibleMove : opponentPlausibleMoves)
 			{
 				Coordinates endSquare{ plausibleMove.getEnd() };
 				if ((endSquare.row == oneSquareAway.row && endSquare.col == oneSquareAway.col) ||
@@ -522,7 +524,7 @@ std::vector<ChessMove> Model::generateValidMoves()
 			bool isSafeToCastle{ true };
 
 			// Check if any square between king and its final destination is under attack
-			for (auto& plausibleMove : plausibleMoves)
+			for (auto& plausibleMove : opponentPlausibleMoves)
 			{
 				Coordinates endSquare{ plausibleMove.getEnd() };
 				if ((endSquare.row == oneSquareAway.row && endSquare.col == oneSquareAway.col) ||
@@ -558,34 +560,30 @@ std::vector<ChessMove> Model::generateValidMoves()
 				// Check that the target square is empty
 				if (targetSquare.isOnBoard() && !m_chessboard.hasPiece(targetSquare))
 				{
-					// Get the adjacent squares
-					std::vector<Coordinates> adjacentSquares{ {currentSquare.row, currentSquare.col - 1},
-							{currentSquare.row, currentSquare.col + 1} };
-					// Check if the pieces in each adjacent square (1) is a pawn of the opposite color and (2) has just moved
-					for (auto& adjacentSquare : adjacentSquares)
+					// Get the adjacent square
+					Coordinates adjacentSquare{ currentSquare.row, targetSquare.col };
+					// Check if the piece in the adjacent square (1) is a pawn of the opposite color and (2) has just moved
+					if (m_chessboard.hasPiece(adjacentSquare))
 					{
-						if (m_chessboard.hasPiece(adjacentSquare))
+						ChessPiece& adjacentPiece{m_chessboard.getPiece(adjacentSquare)};
+						// Adjacent piece is pawn of opposite color
+						if (adjacentPiece.isCorrectPiece(static_cast<PieceColor>(getOtherPlayer(m_currentPlayer)),
+							PieceType::pawn))
 						{
-							ChessPiece& adjacentPiece{m_chessboard.getPiece(adjacentSquare)};
-							// Adjacent piece is pawn of opposite color
-							if (adjacentPiece.isCorrectPiece(static_cast<PieceColor>(getOtherPlayer(m_currentPlayer)),
-								PieceType::pawn))
+							if (getOtherPlayer(m_currentPlayer) == Player::white)
 							{
-								if (getOtherPlayer(m_currentPlayer) == Player::white)
+								WhitePawn* adjacentPawn{dynamic_cast<WhitePawn*>(&adjacentPiece)};
+								if (adjacentPawn->hasDoubleMoved() && adjacentPawn->getDoubleMoveTurn() == getTurnNumber())
 								{
-									WhitePawn* adjacentPawn{dynamic_cast<WhitePawn*>(&adjacentPiece)};
-									if (adjacentPawn->hasDoubleMoved() && adjacentPawn->getDoubleMoveTurn() == getTurnNumber())
-									{
-										validMoves.push_back(EnPassant(&currentPiece, currentSquare, targetSquare, adjacentPawn));
-									}
+									validMoves.push_back(EnPassant(&currentPiece, currentSquare, targetSquare, adjacentPawn));
 								}
-								else if (getOtherPlayer(m_currentPlayer) == Player::black)
+							}
+							else if (getOtherPlayer(m_currentPlayer) == Player::black)
+							{
+								BlackPawn* adjacentPawn{dynamic_cast<BlackPawn*>(&adjacentPiece)};
+								if (adjacentPawn->hasDoubleMoved() && adjacentPawn->getDoubleMoveTurn() == getTurnNumber())
 								{
-									BlackPawn* adjacentPawn{dynamic_cast<BlackPawn*>(&adjacentPiece)};
-									if (adjacentPawn->hasDoubleMoved() && adjacentPawn->getDoubleMoveTurn() == getTurnNumber())
-									{
-										validMoves.push_back(EnPassant(&currentPiece, currentSquare, targetSquare, adjacentPawn));
-									}
+									validMoves.push_back(EnPassant(&currentPiece, currentSquare, targetSquare, adjacentPawn));
 								}
 							}
 						}
@@ -595,7 +593,8 @@ std::vector<ChessMove> Model::generateValidMoves()
 		}
 	}
 	
-	for (auto& plausibleMove : plausibleMoves)
+	std::vector<ChessMove> playerPlausibleMoves{ generatePlausibleMoves() };
+	for (auto& plausibleMove : playerPlausibleMoves)
 	{
 		Player currentPlayer{ m_currentPlayer };
 		simulateMove(plausibleMove);
@@ -688,6 +687,30 @@ void Model::testMoves()
 	std::cout << isChecked() << '\n';
 	ChessMove move6{ m_chessPieces[17], Coordinates{7, 3}, Coordinates{6, 3}, false, nullptr };
 	applyMove(move6);
+
+	std::cout << isChecked() << '\n';
+	ChessMove move7{ m_chessPieces[7], Coordinates{0, 6}, Coordinates{2, 5}, false, nullptr };
+	applyMove(move7);
+
+	std::cout << isChecked() << '\n';
+	ChessMove move8{ m_chessPieces[28], Coordinates{6, 5}, Coordinates{4, 5}, false, nullptr };
+	applyMove(move8);
+
+	std::cout << isChecked() << '\n';
+	ChessMove move9{ m_chessPieces[12], Coordinates{3, 4}, Coordinates{4, 5}, true, m_chessPieces[28] };
+	applyMove(move9);
+
+	std::cout << isChecked() << '\n';
+	ChessMove move10{ m_chessPieces[30], Coordinates{6, 6}, Coordinates{4, 6}, false, nullptr };
+	applyMove(move10);
+
+	std::cout << isChecked() << '\n';
+	ChessMove move11{ m_chessPieces[0], Coordinates{0, 4}, Coordinates{0, 5}, false, nullptr };
+	applyMove(move11);
+
+	std::cout << isChecked() << '\n';
+	ChessMove move12{ m_chessPieces[17], Coordinates{6, 3}, Coordinates{5, 2}, true, m_chessPieces[5] };
+	applyMove(move12);
 
 	;
 }
