@@ -665,7 +665,6 @@ void Model::testMoves()
 	std::cout << isChecked() << '\n';
 	ChessMove move1{ m_chessPieces[12], Coordinates{1, 4}, Coordinates{3, 4}, false, nullptr };
 	applyMove(move1);
-	WhitePawn* wp1{ dynamic_cast<WhitePawn*>(m_chessPieces[12]) };
 
 	std::cout << isChecked() << '\n';
 	ChessMove move2{ m_chessPieces[27], Coordinates{6, 3}, Coordinates{5, 3}, false, nullptr };
@@ -711,6 +710,22 @@ void Model::testMoves()
 	std::cout << isChecked() << '\n';
 	ChessMove move12{ m_chessPieces[17], Coordinates{6, 3}, Coordinates{5, 2}, true, m_chessPieces[5] };
 	applyMove(move12);
+
+	std::cout << isChecked() << '\n';
+	ChessMove move13{ m_chessPieces[12], Coordinates{4, 5}, Coordinates{5, 5}, false, nullptr };
+	applyMove(move13);
+
+	std::cout << isChecked() << '\n';
+	ChessMove move14{ m_chessPieces[16], Coordinates{7, 4}, Coordinates{7, 3}, false, nullptr };
+	applyMove(move14);
+
+	std::cout << isChecked() << '\n';
+	ChessMove move15{ m_chessPieces[12], Coordinates{5, 5}, Coordinates{6, 4}, true, m_chessPieces[28] };
+	applyMove(move15);
+
+	std::cout << isChecked() << '\n';
+	ChessMove move16{ m_chessPieces[16], Coordinates{7, 3}, Coordinates{6, 2}, false, nullptr };
+	applyMove(move16);
 
 	;
 }
