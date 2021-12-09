@@ -15,7 +15,7 @@ protected:
 	
 public:
 	ChessMove(ChessPiece* chessPiece, const Coordinates start, const Coordinates end, const bool isCapture, ChessPiece* capturedPiece);
-	virtual void applyMove(Chessboard& chessboard);
+	virtual void applyMove(Chessboard& chessboard, int turnNumber);
 	// Can only be done right after apply move is done
 	virtual void undoMove(Chessboard& chessboard);
 	Coordinates getEnd();
@@ -28,7 +28,7 @@ private:
 public:
 	Promotion(ChessPiece* chessPiece, const Coordinates start, const Coordinates end, const bool isCapture, ChessPiece* capturedPiece,
 			ChessPiece* promotedPiece);
-	void applyMove(Chessboard& chessboard);
+	void applyMove(Chessboard& chessboard, int turnNumber);
 	void undoMove(Chessboard& chessboard);
 };
 
@@ -36,23 +36,23 @@ class EnPassant : public ChessMove
 {
 public:
 	EnPassant(ChessPiece* chessPiece, const Coordinates start, const Coordinates end, ChessPiece* capturedPiece);
-	void applyMove(Chessboard& chessboard);
+	void applyMove(Chessboard& chessboard, int turnNumber);
 	void undoMove(Chessboard& chessboard);
 };
 
 class CastleShort : public ChessMove
 {
 public:
-	CastleShort(ChessPiece* chessPiece, const Coordinates start, const Coordinates end, ChessPiece* capturedPiece);
-	void applyMove(Chessboard& chessboard);
+	CastleShort(ChessPiece* chessPiece, const Coordinates start, const Coordinates end);
+	void applyMove(Chessboard& chessboard, int turnNumber);
 	void undoMove(Chessboard& chessboard);
 };
 
 class CastleLong : public ChessMove
 {
 public:
-	CastleLong(ChessPiece* chessPiece, const Coordinates start, const Coordinates end, ChessPiece* capturedPiece);
-	void applyMove(Chessboard& chessboard);
+	CastleLong(ChessPiece* chessPiece, const Coordinates start, const Coordinates end);
+	void applyMove(Chessboard& chessboard, int turnNumber);
 	void undoMove(Chessboard& chessboard);
 };
 
@@ -63,7 +63,7 @@ private:
 
 public:
 	MoveHistory();
-	int getTurnNumber();
+	int getTurnNumber() const;
 	void addMove(ChessMove& chessMove);
 	void popMove();
 };

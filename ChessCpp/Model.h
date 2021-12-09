@@ -42,7 +42,8 @@ public:
 
 	// Methods related to the actual model
 	void initialize();
-	ChessPiece& getPromotionPiece(PieceColor color, PieceType type);
+	int getTurnNumber() const;
+	ChessPiece& getPromotionPiece(PieceColor color, PieceType type) const;
 	static Player getOtherPlayer(Player player);
 	void swapCurrentPlayer();
 
@@ -77,8 +78,6 @@ public:
 	void applyMove(ChessMove& move);
 
 	// Miscellaneous test methods
-	void testMove();
-	void testUndoMove();
 	void testMoves();
 	void testPlausibleMoves();
 

@@ -8,12 +8,9 @@
 ChessMove::ChessMove(ChessPiece* chessPiece, const Coordinates start, const Coordinates end,
 		const bool isCapture, ChessPiece* capturedPiece)
 		: m_chessPiece{ chessPiece }, m_start{ start }, m_end{ end },
-		m_isCapture{ isCapture }, m_capturedPiece{ capturedPiece }
-{
+		m_isCapture{ isCapture }, m_capturedPiece{ capturedPiece } {}
 
-}
-
-void ChessMove::applyMove(Chessboard& chessboard)
+void ChessMove::applyMove(Chessboard& chessboard, int turnNumber)
 {
 	chessboard.removePiece(m_start);
 	assert(m_isCapture == chessboard.hasPiece(m_end));
@@ -26,14 +23,45 @@ void ChessMove::applyMove(Chessboard& chessboard)
 	}
 	chessboard.placePiece(m_end, m_chessPiece);
 	m_chessPiece->increaseMoveCount();
+
+	// If the piece is a pawn and it just made a double move
+	if (m_chessPiece->getPieceType() == PieceType::pawn && abs(m_end.row - m_start.row) == 2)
+	{
+		if (m_chessPiece->getPieceColor() == PieceColor::white)
+		{
+			WhitePawn* whitePawn{dynamic_cast<WhitePawn*>(m_chessPiece)};
+			whitePawn->setDoubleMoveTurn(turnNumber);
+		}
+		else if (m_chessPiece->getPieceColor() == PieceColor::black)
+		{
+			BlackPawn* blackPawn{dynamic_cast<BlackPawn*>(m_chessPiece)};
+			blackPawn->setDoubleMoveTurn(turnNumber);
+		}
+	}
 }
 
 void ChessMove::undoMove(Chessboard& chessboard)
 {
-	m_chessPiece->decreaseMoveCount();
-	if (!m_capturedPiece)
+	// If the piece is a pawn and it just made a double move which needs to be undone
+	if (m_chessPiece->getPieceType() == PieceType::pawn && abs(m_end.row - m_start.row) == 2)
 	{
-		m_chessPiece->setCapturedStatus(false);
+		if (m_chessPiece->getPieceColor() == PieceColor::white)
+		{
+			WhitePawn* whitePawn{dynamic_cast<WhitePawn*>(m_chessPiece)};
+			whitePawn->setDoubleMoveTurn(0);
+		}
+		else if (m_chessPiece->getPieceColor() == PieceColor::black)
+		{
+			BlackPawn* blackPawn{dynamic_cast<BlackPawn*>(m_chessPiece)};
+			blackPawn->setDoubleMoveTurn(0);
+		}
+	}
+
+	m_chessPiece->decreaseMoveCount();
+	chessboard.removePiece(m_end);
+	if (m_isCapture)
+	{
+		m_capturedPiece->setCapturedStatus(false);
 		chessboard.placePiece(m_end, m_capturedPiece);
 	}
 	chessboard.placePiece(m_start, m_chessPiece);
@@ -48,7 +76,7 @@ Coordinates ChessMove::getEnd()
 Promotion::Promotion(ChessPiece* chessPiece, const Coordinates start, const Coordinates end, const bool isCapture, ChessPiece* capturedPiece,
 	ChessPiece* promotedPiece) : ChessMove(chessPiece, start, end, isCapture, capturedPiece), m_promotedPiece(promotedPiece) {}
 
-void Promotion::applyMove(Chessboard& chessboard)
+void Promotion::applyMove(Chessboard& chessboard, int turnNumber)
 {
 	chessboard.removePiece(m_start);
 	assert(m_chessPiece->getPieceType() == PieceType::pawn);
@@ -80,7 +108,7 @@ void Promotion::undoMove(Chessboard& chessboard)
 EnPassant::EnPassant(ChessPiece* chessPiece, const Coordinates start, const Coordinates end, ChessPiece* capturedPiece)
 		: ChessMove(chessPiece, start, end, true, capturedPiece) {}
 
-void EnPassant::applyMove(Chessboard& chessboard)
+void EnPassant::applyMove(Chessboard& chessboard, int turnNumber)
 {
 	assert(m_chessPiece->getPieceType() == PieceType::pawn);
 	assert(&(chessboard.getPiece(m_end)) != m_capturedPiece);
@@ -109,10 +137,10 @@ void EnPassant::undoMove(Chessboard& chessboard)
 }
 
 // CastleShort methods
-CastleShort::CastleShort(ChessPiece* chessPiece, const Coordinates start, const Coordinates end, ChessPiece* capturedPiece)
-		: ChessMove(chessPiece, start, end, false, capturedPiece) {}
+CastleShort::CastleShort(ChessPiece* chessPiece, const Coordinates start, const Coordinates end)
+		: ChessMove(chessPiece, start, end, false, nullptr) {}
 
-void CastleShort::applyMove(Chessboard& chessboard)
+void CastleShort::applyMove(Chessboard& chessboard, int turnNumber)
 {
 	// Extra checks to make sure that the castling is legal
 	assert(m_capturedPiece->getPieceType() == PieceType::king);
@@ -158,10 +186,10 @@ void CastleShort::undoMove(Chessboard& chessboard)
 }
 
 // CastleLong methods
-CastleLong::CastleLong(ChessPiece* chessPiece, const Coordinates start, const Coordinates end, ChessPiece* capturedPiece)
-		: ChessMove(chessPiece, start, end, false, capturedPiece) {}
+CastleLong::CastleLong(ChessPiece* chessPiece, const Coordinates start, const Coordinates end)
+		: ChessMove(chessPiece, start, end, false, nullptr) {}
 
-void CastleLong::applyMove(Chessboard& chessboard)
+void CastleLong::applyMove(Chessboard& chessboard, int turnNumber)
 {
 	// Extra checks to make sure that the castling is legal
 	assert(m_chessPiece->getPieceType() == PieceType::king);
@@ -209,7 +237,7 @@ void CastleLong::undoMove(Chessboard& chessboard)
 // MoveHistory methods
 MoveHistory::MoveHistory() {}
 
-int MoveHistory::getTurnNumber()
+int MoveHistory::getTurnNumber() const
 {
 	return 1 + m_moveHistory.size() / 2;
 }

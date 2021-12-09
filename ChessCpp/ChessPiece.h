@@ -176,10 +176,20 @@ public:
 // Pawn classes
 class Pawn : public ChessPiece
 {
+private:
+	// The turn on which the pawn moved forward by two squares. 
+	int m_doubleMoveTurn{ 0 };
+
 public:
 	Pawn(PieceColor color);
 	virtual const std::string toString() const override = 0;
 	virtual std::vector<Coordinates> getTargetSquares(Coordinates coordinates) const override = 0;
+
+	// Double move methods
+	void setDoubleMoveTurn(int doubleMoveTurn);
+	bool canDoubleMove() const;
+	bool hasDoubleMoved() const;
+	int getDoubleMoveTurn() const;
 };
 
 class WhitePawn : public Pawn

@@ -134,7 +134,6 @@ std::vector<Coordinates> Queen::getTargetSquares(Coordinates coordinates) const
 	}
 
 	return targetSquares;
-
 }
 
 WhiteQueen::WhiteQueen() : Queen::Queen(PieceColor::white) {};
@@ -271,7 +270,27 @@ const std::string BlackKnight::toString() const
 }
 
 // Pawn methods
-Pawn::Pawn(PieceColor color) : ChessPiece(color, PieceType::pawn) {};
+Pawn::Pawn(PieceColor color) : ChessPiece(color, PieceType::pawn), m_doubleMoveTurn{ 0 } {};
+
+void Pawn::setDoubleMoveTurn(int doubleMoveTurn)
+{
+	m_doubleMoveTurn = doubleMoveTurn;
+}
+
+bool Pawn::canDoubleMove() const
+{
+	return m_moveCount == 0;
+}
+
+bool Pawn::hasDoubleMoved() const
+{
+	return m_doubleMoveTurn != 0;
+}
+
+int Pawn::getDoubleMoveTurn() const
+{
+	return m_doubleMoveTurn;
+}
 
 WhitePawn::WhitePawn() : Pawn::Pawn(PieceColor::white) {};
 
@@ -286,7 +305,7 @@ std::vector<Coordinates> WhitePawn::getTargetSquares(Coordinates coordinates) co
 	int start_row = coordinates.row;
 	int start_col = coordinates.col;
 	
-	if (m_moveCount == 0)
+	if (canDoubleMove())
 	{
 		Coordinates targetSquare{ start_row + 2, start_col };
 		targetSquares.push_back(targetSquare);
@@ -326,4 +345,3 @@ std::vector<Coordinates> BlackPawn::getTargetSquares(Coordinates coordinates) co
 	}
 	return targetSquares;
 }
-
