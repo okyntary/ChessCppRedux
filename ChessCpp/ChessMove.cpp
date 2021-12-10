@@ -85,7 +85,7 @@ void Promotion::applyMove(Chessboard& chessboard, int turnNumber)
 	assert(m_end.row == 0 || m_end.row == 7);
 	if (m_isCapture)
 	{
-		assert(!m_capturedPiece);
+		assert(m_capturedPiece);
 		assert(m_capturedPiece == &(chessboard.getPiece(m_end)));
 		chessboard.removePiece(m_end);
 		m_capturedPiece->setAsCaptured();
@@ -143,7 +143,7 @@ CastleShort::CastleShort(ChessPiece* chessPiece, const Coordinates start, const 
 void CastleShort::applyMove(Chessboard& chessboard, int turnNumber)
 {
 	// Extra checks to make sure that the castling is legal
-	assert(m_capturedPiece->getPieceType() == PieceType::king);
+	assert(m_chessPiece->getPieceType() == PieceType::king);
 	assert(!m_chessPiece->hasMoved());
 	assert(m_start.col == 4);
 	assert(m_end.col == 6);
@@ -242,7 +242,7 @@ int MoveHistory::getTurnNumber() const
 	return 1 + m_moveHistory.size() / 2;
 }
 
-void MoveHistory::addMove(ChessMove& move)
+void MoveHistory::addMove(std::shared_ptr<ChessMove> move)
 {
 	m_moveHistory.push_back(move);
 }

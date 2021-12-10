@@ -28,7 +28,7 @@ private:
 
 	std::array<ChessPiece*, 32> m_chessPieces{};
 	Chessboard m_chessboard{};
-	std::vector<ChessMove> m_validMoves;
+	std::vector<std::shared_ptr<ChessMove>> m_validMoves;
 	MoveHistory m_moveHistory{};
 	Player m_currentPlayer{ Player::white };
 
@@ -58,11 +58,11 @@ public:
 
 	// Move-generating methods
 	// Generates all plausible moves on this board state, given the current player
-	std::vector<ChessMove> generatePlausibleMoves();
+	std::vector<std::shared_ptr<ChessMove>> generatePlausibleMoves();
 	// Generates all plausible moves on this board state, given the specified player
-	std::vector<ChessMove> generatePlausibleMoves(Player player);
+	std::vector<std::shared_ptr<ChessMove>> generatePlausibleMoves(Player player);
 	// Generates all valid moves on this board state, given the current player
-	std::vector<ChessMove> generateValidMoves();
+	std::vector<std::shared_ptr<ChessMove>> generateValidMoves();
 
 	// Methods related to testing board state
 	Coordinates getPlayerKingSquare(Player player);
@@ -74,14 +74,13 @@ public:
 	bool isStalemated(Player player);
 
 	// Methods related to making moves
-	void simulateMove(ChessMove& move);
-	void undoMove(ChessMove& move);
-	void applyMove(ChessMove& move);
+	void simulateMove(std::shared_ptr<ChessMove>& move);
+	void undoMove(std::shared_ptr<ChessMove>& move);
+	void applyMove(std::shared_ptr<ChessMove>& move);
 
 	// Miscellaneous test methods
 	void testMoves();
 	void testPlausibleMoves();
 
-	void testUniquePointer();
 	void testTargetSquares();
 };

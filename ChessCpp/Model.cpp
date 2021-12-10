@@ -402,14 +402,14 @@ bool Model::hasNoPawnCollision(const ChessPiece& chessPiece, const Coordinates s
 	return !m_chessboard.hasPiece(end);
 }
 
-std::vector<ChessMove> Model::generatePlausibleMoves()
+std::vector<std::shared_ptr<ChessMove>> Model::generatePlausibleMoves()
 {
 	return generatePlausibleMoves(m_currentPlayer);
 }
 
-std::vector<ChessMove> Model::generatePlausibleMoves(Player player)
+std::vector<std::shared_ptr<ChessMove>> Model::generatePlausibleMoves(Player player)
 {
-	std::vector<ChessMove> plausibleMoves{};
+	std::vector<std::shared_ptr<ChessMove>> plausibleMoves{};
 	// Loop through all squares of the chessboard
 	for (int i{ 0 }; i < 8; ++i)
 	{
@@ -439,23 +439,19 @@ std::vector<ChessMove> Model::generatePlausibleMoves(Player player)
 					bool isOnSeventhRank = pieceColor == PieceColor::white ? currentSquare.row == 6 : currentSquare.row == 1;
 					if (isPawn && isOnSeventhRank)
 					{
-						Promotion queenPromotion{&currentPiece, currentSquare, targetSquare, isCapture, capturedPiece,
-							&getPromotionPiece(pieceColor, PieceType::queen) };
-						Promotion rookPromotion{&currentPiece, currentSquare, targetSquare, isCapture, capturedPiece,
-							&getPromotionPiece(pieceColor, PieceType::rook) };
-						Promotion bishopPromotion{&currentPiece, currentSquare, targetSquare, isCapture, capturedPiece,
-							&getPromotionPiece(pieceColor, PieceType::bishop) };
-						Promotion knightPromotion{&currentPiece, currentSquare, targetSquare, isCapture, capturedPiece,
-							&getPromotionPiece(pieceColor, PieceType::knight) };
-
-						plausibleMoves.push_back(queenPromotion);
-						plausibleMoves.push_back(rookPromotion);
-						plausibleMoves.push_back(bishopPromotion);
-						plausibleMoves.push_back(knightPromotion);
+						plausibleMoves.push_back(std::make_shared<Promotion>(&currentPiece, currentSquare, targetSquare,
+								isCapture, capturedPiece, &getPromotionPiece(pieceColor, PieceType::queen)));
+						plausibleMoves.push_back(std::make_shared<Promotion>(&currentPiece, currentSquare, targetSquare,
+								isCapture, capturedPiece, &getPromotionPiece(pieceColor, PieceType::rook)));
+						plausibleMoves.push_back(std::make_shared<Promotion>(&currentPiece, currentSquare, targetSquare,
+								isCapture, capturedPiece, &getPromotionPiece(pieceColor, PieceType::bishop)));
+						plausibleMoves.push_back(std::make_shared<Promotion>(&currentPiece, currentSquare, targetSquare,
+								isCapture, capturedPiece, &getPromotionPiece(pieceColor, PieceType::knight)));
 					}
 					else
 					{
-						plausibleMoves.push_back(ChessMove{ &currentPiece, currentSquare, targetSquare, isCapture, capturedPiece });
+						plausibleMoves.push_back(std::make_shared<ChessMove>(&currentPiece, currentSquare, targetSquare,
+								isCapture, capturedPiece));
 					}
 				}
 			}
@@ -464,9 +460,9 @@ std::vector<ChessMove> Model::generatePlausibleMoves(Player player)
 	return plausibleMoves;
 }
 
-std::vector<ChessMove> Model::generateValidMoves()
+std::vector<std::shared_ptr<ChessMove>> Model::generateValidMoves()
 {
-	std::vector<ChessMove> validMoves{};
+	std::vector<std::shared_ptr<ChessMove>> validMoves{};
 	
 	// Account for castling
 	bool isCurrentlyChecked{ isChecked() };
@@ -484,7 +480,7 @@ std::vector<ChessMove> Model::generateValidMoves()
 	ChessPiece& queenRook{ m_chessboard.getPiece({castlingRow, 0}) };
 	bool queenRookHasNotMoved{ m_chessboard.hasPiece({castlingRow, 0}) && queenRook.isCorrectPiece(currentPlayer, PieceType::rook) && !queenRook.hasMoved() };
 
-	std::vector<ChessMove> opponentPlausibleMoves{ generatePlausibleMoves(getOtherPlayer(m_currentPlayer)) };
+	std::vector<std::shared_ptr<ChessMove>> opponentPlausibleMoves{ generatePlausibleMoves(getOtherPlayer(m_currentPlayer)) };
 
 	// Check if short castling is possible
 	if (!isCurrentlyChecked && kingHasNotMoved && kingRookHasNotMoved)
@@ -499,7 +495,7 @@ std::vector<ChessMove> Model::generateValidMoves()
 			// Check if any square between king and its final destination is under attack
 			for (auto& plausibleMove : opponentPlausibleMoves)
 			{
-				Coordinates endSquare{ plausibleMove.getEnd() };
+				Coordinates endSquare{ plausibleMove->getEnd() };
 				if ((endSquare.row == oneSquareAway.row && endSquare.col == oneSquareAway.col) ||
 						(endSquare.row == twoSquaresAway.row && endSquare.col == twoSquaresAway.col))
 				{
@@ -510,7 +506,7 @@ std::vector<ChessMove> Model::generateValidMoves()
 
 			if (isSafeToCastle)
 			{
-				validMoves.push_back(CastleShort{ &king, kingSquare, twoSquaresAway });
+				validMoves.push_back(std::make_shared<CastleShort>(&king, kingSquare, twoSquaresAway));
 			}
 		}
 	}
@@ -528,7 +524,7 @@ std::vector<ChessMove> Model::generateValidMoves()
 			// Check if any square between king and its final destination is under attack
 			for (auto& plausibleMove : opponentPlausibleMoves)
 			{
-				Coordinates endSquare{ plausibleMove.getEnd() };
+				Coordinates endSquare{ plausibleMove->getEnd() };
 				if ((endSquare.row == oneSquareAway.row && endSquare.col == oneSquareAway.col) ||
 						(endSquare.row == twoSquaresAway.row && endSquare.col == twoSquaresAway.col))
 				{
@@ -539,7 +535,7 @@ std::vector<ChessMove> Model::generateValidMoves()
 
 			if (isSafeToCastle)
 			{
-				validMoves.push_back(CastleLong{ &king, kingSquare, twoSquaresAway });
+				validMoves.push_back(std::make_shared<CastleLong>(&king, kingSquare, twoSquaresAway));
 			}
 		}
 	}
@@ -577,7 +573,8 @@ std::vector<ChessMove> Model::generateValidMoves()
 								WhitePawn* adjacentPawn{dynamic_cast<WhitePawn*>(&adjacentPiece)};
 								if (adjacentPawn->hasDoubleMoved() && adjacentPawn->getDoubleMoveTurn() == getTurnNumber())
 								{
-									validMoves.push_back(EnPassant(&currentPiece, currentSquare, targetSquare, adjacentPawn));
+									validMoves.push_back(std::make_shared<EnPassant>(&currentPiece, currentSquare,
+											targetSquare, adjacentPawn));
 								}
 							}
 							else if (getOtherPlayer(m_currentPlayer) == Player::black)
@@ -585,7 +582,8 @@ std::vector<ChessMove> Model::generateValidMoves()
 								BlackPawn* adjacentPawn{dynamic_cast<BlackPawn*>(&adjacentPiece)};
 								if (adjacentPawn->hasDoubleMoved() && adjacentPawn->getDoubleMoveTurn() == getTurnNumber())
 								{
-									validMoves.push_back(EnPassant(&currentPiece, currentSquare, targetSquare, adjacentPawn));
+									validMoves.push_back(std::make_shared<EnPassant>(&currentPiece, currentSquare,
+											targetSquare, adjacentPawn));
 								}
 							}
 						}
@@ -595,7 +593,7 @@ std::vector<ChessMove> Model::generateValidMoves()
 		}
 	}
 	
-	std::vector<ChessMove> playerPlausibleMoves{ generatePlausibleMoves() };
+	std::vector<std::shared_ptr<ChessMove>> playerPlausibleMoves{ generatePlausibleMoves() };
 	for (auto& plausibleMove : playerPlausibleMoves)
 	{
 		Player currentPlayer{ m_currentPlayer };
@@ -631,31 +629,31 @@ bool Model::isChecked()
 
 bool Model::isChecked(Player player)
 {
-	std::vector<ChessMove> plausibleOpponentMoves{ generatePlausibleMoves(getOtherPlayer(player)) };
+	std::vector<std::shared_ptr<ChessMove>> plausibleOpponentMoves{ generatePlausibleMoves(getOtherPlayer(player)) };
 	Coordinates kingSquare{ getPlayerKingSquare(player) };
 	for (auto& plausibleMove : plausibleOpponentMoves)
 	{
-		Coordinates endSquare{ plausibleMove.getEnd() };
+		Coordinates endSquare{ plausibleMove->getEnd() };
 		if (endSquare.row == kingSquare.row && endSquare.col == kingSquare.col) return true;
 	}
 	return false;
 }
 
-void Model::simulateMove(ChessMove& move)
+void Model::simulateMove(std::shared_ptr<ChessMove>& move)
 {
 	swapCurrentPlayer();
 	m_moveHistory.addMove(move);
-	move.applyMove(m_chessboard, getTurnNumber());
+	move->applyMove(m_chessboard, getTurnNumber());
 }
 
-void Model::undoMove(ChessMove& move)
+void Model::undoMove(std::shared_ptr<ChessMove>& move)
 {
-	move.undoMove(m_chessboard);
+	move->undoMove(m_chessboard);
 	m_moveHistory.popMove();
 	swapCurrentPlayer();
 }
 
-void Model::applyMove(ChessMove& move)
+void Model::applyMove(std::shared_ptr<ChessMove>& move)
 {
 	simulateMove(move);
 	updateView();
@@ -665,77 +663,89 @@ void Model::applyMove(ChessMove& move)
 void Model::testMoves()
 {
 	std::cout << isChecked() << '\n';
-	ChessMove move1{ m_chessPieces[12], Coordinates{1, 4}, Coordinates{3, 4}, false, nullptr };
+	std::shared_ptr<ChessMove> move1{ std::make_shared<ChessMove>(m_chessPieces[12], Coordinates{1, 4},
+			Coordinates{3, 4}, false, nullptr) };
 	applyMove(move1);
 
 	std::cout << isChecked() << '\n';
-	ChessMove move2{ m_chessPieces[27], Coordinates{6, 3}, Coordinates{5, 3}, false, nullptr };
+	std::shared_ptr<ChessMove> move2{ std::make_shared<ChessMove>(m_chessPieces[27], Coordinates{6, 3}, Coordinates{5, 3}, false, nullptr) };
 	applyMove(move2);
 
 	std::cout << isChecked() << '\n';
-	ChessMove move3{ m_chessPieces[5], Coordinates{0, 5}, Coordinates{4, 1}, false, nullptr };
+	std::shared_ptr<ChessMove> move3{ std::make_shared<ChessMove>(m_chessPieces[5], Coordinates{0, 5}, Coordinates{4, 1}, false, nullptr) };
 	applyMove(move3);
 
 	std::cout << isChecked() << '\n';
-	ChessMove move4{ m_chessPieces[26], Coordinates{6, 2}, Coordinates{5, 2}, false, nullptr };
+	std::shared_ptr<ChessMove> move4{ std::make_shared<ChessMove>(m_chessPieces[26], Coordinates{6, 2}, Coordinates{5, 2}, false, nullptr) };
 	applyMove(move4);
 
 	std::cout << isChecked() << '\n';
-	ChessMove move5{ m_chessPieces[5], Coordinates{4, 1}, Coordinates{5, 2}, true, m_chessPieces[26] };
-	updateView();
+	std::shared_ptr<ChessMove> move5{ std::make_shared<ChessMove>(m_chessPieces[5], Coordinates{4, 1}, Coordinates{5, 2}, true, m_chessPieces[26]) };
 	applyMove(move5);
 
 	std::cout << isChecked() << '\n';
-	ChessMove move6{ m_chessPieces[17], Coordinates{7, 3}, Coordinates{6, 3}, false, nullptr };
+	std::shared_ptr<ChessMove> move6{ std::make_shared<ChessMove>(m_chessPieces[17], Coordinates{7, 3}, Coordinates{6, 3}, false, nullptr) };
 	applyMove(move6);
 
 	std::cout << isChecked() << '\n';
-	ChessMove move7{ m_chessPieces[7], Coordinates{0, 6}, Coordinates{2, 5}, false, nullptr };
+	std::shared_ptr<ChessMove> move7{ std::make_shared<ChessMove>(m_chessPieces[7], Coordinates{0, 6}, Coordinates{2, 5}, false, nullptr) };
 	applyMove(move7);
 
 	std::cout << isChecked() << '\n';
-	ChessMove move8{ m_chessPieces[28], Coordinates{6, 5}, Coordinates{4, 5}, false, nullptr };
+	std::shared_ptr<ChessMove> move8{ std::make_shared<ChessMove>(m_chessPieces[28], Coordinates{6, 5}, Coordinates{4, 5}, false, nullptr) };
 	applyMove(move8);
 
 	std::cout << isChecked() << '\n';
-	ChessMove move9{ m_chessPieces[12], Coordinates{3, 4}, Coordinates{4, 5}, true, m_chessPieces[28] };
+	std::shared_ptr<ChessMove> move9{ std::make_shared<ChessMove>(m_chessPieces[12], Coordinates{3, 4}, Coordinates{4, 5}, true, m_chessPieces[28]) };
 	applyMove(move9);
 
 	std::cout << isChecked() << '\n';
-	ChessMove move10{ m_chessPieces[30], Coordinates{6, 6}, Coordinates{4, 6}, false, nullptr };
+	std::shared_ptr<ChessMove> move10{ std::make_shared<ChessMove>(m_chessPieces[30], Coordinates{6, 6}, Coordinates{4, 6}, false, nullptr) };
 	applyMove(move10);
 
 	std::cout << isChecked() << '\n';
-	ChessMove move11{ m_chessPieces[0], Coordinates{0, 4}, Coordinates{0, 5}, false, nullptr };
+	std::shared_ptr<ChessMove> move11{ std::make_shared<CastleShort>(m_chessPieces[0], Coordinates{0, 4}, Coordinates{0, 6}) };
 	applyMove(move11);
 
 	std::cout << isChecked() << '\n';
-	ChessMove move12{ m_chessPieces[17], Coordinates{6, 3}, Coordinates{5, 2}, true, m_chessPieces[5] };
+	std::shared_ptr<ChessMove> move12{ std::make_shared<ChessMove>(m_chessPieces[28], Coordinates{6, 4}, Coordinates{4, 4}, false, nullptr) };
 	applyMove(move12);
 
 	std::cout << isChecked() << '\n';
-	ChessMove move13{ m_chessPieces[12], Coordinates{4, 5}, Coordinates{5, 5}, false, nullptr };
+	std::shared_ptr<ChessMove> move13{ std::make_shared<EnPassant>(m_chessPieces[12], Coordinates{4, 5}, Coordinates{5, 4}, m_chessPieces[28]) };
 	applyMove(move13);
 
-	std::cout << isChecked() << '\n';
-	ChessMove move14{ m_chessPieces[16], Coordinates{7, 4}, Coordinates{7, 3}, false, nullptr };
-	applyMove(move14);
+	//std::cout << isChecked() << '\n';
+	//std::shared_ptr<ChessMove> move11{ std::make_shared<ChessMove>(m_chessPieces[0], Coordinates{0, 4}, Coordinates{0, 5}, false, nullptr) };
+	//applyMove(move11);
 
-	std::cout << isChecked() << '\n';
-	ChessMove move15{ m_chessPieces[12], Coordinates{5, 5}, Coordinates{6, 4}, true, m_chessPieces[28] };
-	applyMove(move15);
+	//std::cout << isChecked() << '\n';
+	//std::shared_ptr<ChessMove> move12{ std::make_shared<ChessMove>(m_chessPieces[17], Coordinates{6, 3}, Coordinates{5, 2}, true, m_chessPieces[5]) };
+	//applyMove(move12);
 
-	std::cout << isChecked() << '\n';
-	ChessMove move16{ m_chessPieces[16], Coordinates{7, 3}, Coordinates{6, 2}, false, nullptr };
-	applyMove(move16);
+	//std::cout << isChecked() << '\n';
+	//std::shared_ptr<ChessMove> move13{ std::make_shared<ChessMove>(m_chessPieces[12], Coordinates{4, 5}, Coordinates{5, 5}, false, nullptr) };
+	//applyMove(move13);
+
+	//std::cout << isChecked() << '\n';
+	//std::shared_ptr<ChessMove> move14{ std::make_shared<ChessMove>(m_chessPieces[16], Coordinates{7, 4}, Coordinates{7, 3}, false, nullptr) };
+	//applyMove(move14);
+
+	//std::cout << isChecked() << '\n';
+	//std::shared_ptr<ChessMove> move15{ std::make_shared<ChessMove>(m_chessPieces[12], Coordinates{5, 5}, Coordinates{6, 4}, true, m_chessPieces[28]) };
+	//applyMove(move15);
+
+	//std::cout << isChecked() << '\n';
+	//std::shared_ptr<ChessMove> move16{ std::make_shared<ChessMove>(m_chessPieces[16], Coordinates{7, 3}, Coordinates{6, 2}, false, nullptr) };
+	//applyMove(move16);
 
 	;
 }
 
 void Model::testPlausibleMoves()
 {
-	std::vector<ChessMove> plausibleMovesWhite{ generatePlausibleMoves() };
-	std::vector<ChessMove> plausibleMovesBlack{ generatePlausibleMoves(Player::black) };
+	std::vector<std::shared_ptr<ChessMove>> plausibleMovesWhite{ generatePlausibleMoves() };
+	std::vector<std::shared_ptr<ChessMove>> plausibleMovesBlack{ generatePlausibleMoves(Player::black) };
 	plausibleMovesWhite;
 	plausibleMovesBlack;
 }

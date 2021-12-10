@@ -1,5 +1,7 @@
 #pragma once
 
+#include <memory>
+
 #include "Coordinates.h"
 #include "Chessboard.h"
 #include "ChessPiece.h"
@@ -59,11 +61,11 @@ public:
 class MoveHistory
 {
 private:
-	std::vector<ChessMove> m_moveHistory{};
+	std::vector<std::shared_ptr<ChessMove>> m_moveHistory{};
 
 public:
 	MoveHistory();
 	int getTurnNumber() const;
-	void addMove(ChessMove& chessMove);
+	void addMove(std::shared_ptr<ChessMove>  chessMove);
 	void popMove();
 };

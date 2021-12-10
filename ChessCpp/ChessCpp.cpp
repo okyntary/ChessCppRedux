@@ -14,7 +14,7 @@ int main()
     model.setView(&view);
     Controller controller(&model, &view);
 
-    model.testUniquePointer();
+    model.testMoves();
 
     bool isExit = false;
     while (!isExit)
