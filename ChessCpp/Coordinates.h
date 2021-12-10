@@ -2,6 +2,7 @@
 
 struct Coordinates
 {
+	// Maybe I should have used std::pair instead
 	int row;
 	int col;
 	bool isOnBoard() const

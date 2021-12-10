@@ -5,7 +5,6 @@
 #include "View.h"
 #include "Model.h"
 #include "Controller.h"
-
 #include "ChessPiece.h"
 
 int main()
@@ -15,7 +14,7 @@ int main()
     model.setView(&view);
     Controller controller(&model, &view);
 
-    model.testMoves();
+    model.testUniquePointer();
 
     bool isExit = false;
     while (!isExit)

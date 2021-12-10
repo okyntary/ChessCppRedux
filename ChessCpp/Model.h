@@ -1,6 +1,7 @@
 #pragma once
 
 #include <array>
+#include <memory>
 #include <vector>
 
 class View;
@@ -81,5 +82,6 @@ public:
 	void testMoves();
 	void testPlausibleMoves();
 
+	void testUniquePointer();
 	void testTargetSquares();
 };

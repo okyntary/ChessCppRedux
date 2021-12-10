@@ -1,4 +1,6 @@
 #include <cassert>
+#include <memory>
+#include <vector>
 
 #include "Model.h"
 #include "Coordinates.h"
