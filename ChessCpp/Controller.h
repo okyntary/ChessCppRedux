@@ -1,6 +1,7 @@
 #pragma once
 
 #include <iostream>
+#include <string>
 
 class Model;
 #include "Model.h"
@@ -14,6 +15,8 @@ class Controller
 	{
 		quit,
 		display,
+		validMoves,
+		enterMove,
 		setSize,
 		toggleFlippedStatus,
 		toggleCoords,
@@ -27,9 +30,12 @@ private:
 public:
 	Controller(Model* const model, View* const view);
 	bool readInput() const;
+	static bool isPlausibleMove(const std::string& move);
 
 	bool quit() const;
 	bool display() const;
+	bool showValidMoves() const;
+	bool enterMove(const std::string& move) const;
 	bool setSize(const std::string& size) const;
 	bool toggleFlippedStatus() const;
 	bool toggleCoords() const;

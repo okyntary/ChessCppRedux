@@ -604,6 +604,17 @@ std::vector<std::shared_ptr<ChessMove>> Model::generateValidMoves()
 	return validMoves;
 }
 
+bool Model::validateMove(const ChessMove& move) const
+{
+	// todo
+	return true;
+}
+
+void Model::enterMove(const std::string& move) const
+{
+	// todo
+}
+
 Coordinates Model::getPlayerKingSquare(Player player)
 {
 	Coordinates playerKingSquare{ -1, -1 };
@@ -639,6 +650,26 @@ bool Model::isChecked(Player player)
 	return false;
 }
 
+bool Model::isCheckmated()
+{
+	return isCheckmated(m_currentPlayer);
+}
+
+bool Model::isCheckmated(Player player)
+{
+	return isChecked(player) && m_validMoves.size() == 0;
+}
+
+bool Model::isStalemated()
+{
+	return isStalemated(m_currentPlayer);
+}
+
+bool Model::isStalemated(Player player)
+{
+	return !isChecked(player) && m_validMoves.size() == 0;
+}
+
 void Model::simulateMove(std::shared_ptr<ChessMove>& move)
 {
 	swapCurrentPlayer();
@@ -658,6 +689,17 @@ void Model::applyMove(std::shared_ptr<ChessMove>& move)
 	simulateMove(move);
 	updateView();
 	m_validMoves = generateValidMoves();
+
+	// Check for stalemate and checkmate
+	if (isCheckmated())
+	{
+		m_view->isCheckmated();
+	}
+
+	if (isStalemated())
+	{
+		m_view->isStalemated();
+	}
 }
 
 void Model::testMoves()
@@ -748,6 +790,23 @@ void Model::testPlausibleMoves()
 	std::vector<std::shared_ptr<ChessMove>> plausibleMovesBlack{ generatePlausibleMoves(Player::black) };
 	plausibleMovesWhite;
 	plausibleMovesBlack;
+}
+
+void Model::testCheckmate()
+{
+	std::shared_ptr<ChessMove> move1{ std::make_shared<ChessMove>(m_chessPieces[13], Coordinates{1, 5}, Coordinates{3, 5}, false, nullptr) };
+	applyMove(move1);
+
+	std::shared_ptr<ChessMove> move2{ std::make_shared<ChessMove>(m_chessPieces[28], Coordinates{6, 4}, Coordinates{4, 4}, false, nullptr) };
+	applyMove(move2);
+
+	std::shared_ptr<ChessMove> move3{ std::make_shared<ChessMove>(m_chessPieces[14], Coordinates{1, 6}, Coordinates{3, 6}, false, nullptr) };
+	applyMove(move3);
+	
+	std::shared_ptr<ChessMove> move4{ std::make_shared<ChessMove>(m_chessPieces[17], Coordinates{7, 3}, Coordinates{3, 7}, false, nullptr) };
+	applyMove(move4);
+
+	//std::cout << "Is checkmated: " << isCheckmated() << '\n';
 }
 
 void Model::testTargetSquares()

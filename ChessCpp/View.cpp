@@ -20,22 +20,56 @@ const std::string View::largeInnerLineBreak{ "|          |          |          |
 const std::string View::largeLowerLineBreak{ "|          |          |          |          |          |          |          |          |\n"
                                              "|__________|__________|__________|__________|__________|__________|__________|__________|\n" };
 
+void View::showValidMoves() const
+{
+	std::cout << "Valid moves for current player: \n";
+
+	int turnNumber{m_model->getTurnNumber()};
+	Player currentPlayer{ m_model->m_currentPlayer };
+	for (auto& validMove : m_model->m_validMoves)
+	{
+		std::string turn{turnNumber + ". "};
+		std::string playerColor{currentPlayer == Player::white ? "" : "..."};
+		std::cout << turn + playerColor + validMove->toString() + '\n';
+	}
+}
+
+void View::invalidMoveEntered() const
+{
+
+}
+
+void View::isCheckmated() const
+{
+	std::string currentPlayer{m_model->m_currentPlayer == Player::white ? "White" : "Black"};
+	std::cout << currentPlayer << " is checkmated.\n";
+}
+
+void View::isStalemated() const
+{
+	std::string currentPlayer{m_model->m_currentPlayer == Player::white ? "White" : "Black"};
+	std::cout << currentPlayer << " is stalemated.\n";
+}
+
 void View::setSize(Size size)
 {
 	m_size = size;
 	update();
+	display();
 }
 
 void View::toggleFlippedStatus()
 {
 	m_flippedStatus = m_flippedStatus ^ 1;
 	update();
+	display();
 }
 
 void View::toggleCoords()
 {
 	m_showCoords = m_showCoords ^ 1;
 	update();
+	display();
 }
 
 void View::update()

@@ -24,6 +24,16 @@ bool Controller::readInput() const
 	{
 		command = Command::display;
 	}
+	else if (input == "valid" || input == "v")
+	{
+		command = Command::validMoves;
+	}
+	else if (isPlausibleMove(input))
+	{
+		command = Command::enterMove;
+		params.push_back({input[1], input[0]});
+		params.push_back({input[3], input[2]});
+	}
 	else if (input == "sizes" || input == "ss")
 	{
 		command = Command::setSize;
@@ -58,6 +68,10 @@ bool Controller::readInput() const
 		return quit();
 	case Controller::Command::display:
 		return display();
+	case Controller::Command::validMoves:
+		return showValidMoves();
+	case Controller::Command::enterMove:
+		return enterMove(params.at(0));
 	case Controller::Command::setSize:
 		return setSize(params.at(0));
 	case Controller::Command::toggleFlippedStatus:
@@ -71,6 +85,15 @@ bool Controller::readInput() const
 	}
 }
 
+bool Controller::isPlausibleMove(const std::string& move)
+{
+	if (move == "0-0" || move == "0-0-0") return true;
+	if (move.size() != 4) return false;
+	Coordinates startSquare{static_cast<int>(move[1] - 49), static_cast<int>(move[0] - 65)};
+	Coordinates endSquare{static_cast<int>(move[3] - 49), static_cast<int>(move[2] - 65)};
+	return startSquare.isOnBoard() && endSquare.isOnBoard();
+}
+
 bool Controller::quit() const
 {
 	std::cout << "Quitting.\n";
@@ -80,6 +103,18 @@ bool Controller::quit() const
 bool Controller::display() const
 {
 	m_view->display();
+	return false;
+}
+
+bool Controller::showValidMoves() const
+{
+	m_view->showValidMoves();
+	return false;
+}
+
+bool Controller::enterMove(const std::string& move) const
+{
+	m_model->enterMove(move);
 	return false;
 }
 

@@ -39,9 +39,18 @@ private:
 public:
 	View(const Model * const model) : m_model{ model } {};
 
+
+	// Move-related methods:
+	// Show all currently valid moves
+	void showValidMoves() const;
+	void invalidMoveEntered() const;
+
+	void isCheckmated() const;
+	void isStalemated() const;
+
 	// Set the values of the respective members of the class
+	// Change View settings
 	void setSize(Size size);
-	// Change the settings of View
 	void toggleFlippedStatus();
 	void toggleCoords();
 

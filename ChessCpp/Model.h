@@ -11,7 +11,7 @@ class View;
 #include "ChessPiece.h"
 #include "ChessMove.h"
 
-enum class Player
+ enum class Player
 {
 	white,
 	black,
@@ -64,6 +64,11 @@ public:
 	// Generates all valid moves on this board state, given the current player
 	std::vector<std::shared_ptr<ChessMove>> generateValidMoves();
 
+	// Check if the given move is inside m_validMoves
+	bool validateMove(const ChessMove& move) const;
+	// Enter the move, called by the Controller
+	void enterMove(const std::string& move) const;
+
 	// Methods related to testing board state
 	Coordinates getPlayerKingSquare(Player player);
 	bool isChecked();
@@ -74,6 +79,7 @@ public:
 	bool isStalemated(Player player);
 
 	// Methods related to making moves
+	bool isValidMove(std::shared_ptr<ChessMove>& move); // Need to implement, to check whether move entered is valid
 	void simulateMove(std::shared_ptr<ChessMove>& move);
 	void undoMove(std::shared_ptr<ChessMove>& move);
 	void applyMove(std::shared_ptr<ChessMove>& move);
@@ -81,6 +87,6 @@ public:
 	// Miscellaneous test methods
 	void testMoves();
 	void testPlausibleMoves();
-
+	void testCheckmate();
 	void testTargetSquares();
 };

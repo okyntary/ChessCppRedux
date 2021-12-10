@@ -1,6 +1,7 @@
 #pragma once
 
 #include <memory>
+#include <string>
 
 #include "Coordinates.h"
 #include "Chessboard.h"
@@ -21,6 +22,8 @@ public:
 	// Can only be done right after apply move is done
 	virtual void undoMove(Chessboard& chessboard);
 	Coordinates getEnd();
+
+	virtual std::string toString() const;
 };
 
 class Promotion : public ChessMove
@@ -32,6 +35,8 @@ public:
 			ChessPiece* promotedPiece);
 	void applyMove(Chessboard& chessboard, int turnNumber);
 	void undoMove(Chessboard& chessboard);
+
+	std::string toString() const override;
 };
 
 class EnPassant : public ChessMove
@@ -40,6 +45,8 @@ public:
 	EnPassant(ChessPiece* chessPiece, const Coordinates start, const Coordinates end, ChessPiece* capturedPiece);
 	void applyMove(Chessboard& chessboard, int turnNumber);
 	void undoMove(Chessboard& chessboard);
+
+	std::string toString() const override;
 };
 
 class CastleShort : public ChessMove
@@ -48,6 +55,8 @@ public:
 	CastleShort(ChessPiece* chessPiece, const Coordinates start, const Coordinates end);
 	void applyMove(Chessboard& chessboard, int turnNumber);
 	void undoMove(Chessboard& chessboard);
+
+	std::string toString() const override;
 };
 
 class CastleLong : public ChessMove
@@ -56,6 +65,8 @@ public:
 	CastleLong(ChessPiece* chessPiece, const Coordinates start, const Coordinates end);
 	void applyMove(Chessboard& chessboard, int turnNumber);
 	void undoMove(Chessboard& chessboard);
+
+	std::string toString() const override;
 };
 
 class MoveHistory

@@ -1,4 +1,5 @@
 #include <cassert>
+#include <string>
 
 #include "Coordinates.h"
 #include "Chessboard.h"
@@ -72,6 +73,16 @@ Coordinates ChessMove::getEnd()
 	return m_end;
 }
 
+std::string ChessMove::toString() const
+{
+	std::string currentPiece{ m_chessPiece->toString().at(1) };
+	if (m_chessPiece->getPieceType() == PieceType::pawn)
+	{
+		return {m_start.toString() + (m_isCapture ? "x" : "-") + m_end.toString()};
+	}
+	return {currentPiece + m_start.toString() + (m_isCapture ? "x" : "-") + currentPiece + m_end.toString()};
+}
+
 // Promotion methods
 Promotion::Promotion(ChessPiece* chessPiece, const Coordinates start, const Coordinates end, const bool isCapture, ChessPiece* capturedPiece,
 	ChessPiece* promotedPiece) : ChessMove(chessPiece, start, end, isCapture, capturedPiece), m_promotedPiece(promotedPiece) {}
@@ -104,6 +115,12 @@ void Promotion::undoMove(Chessboard& chessboard)
 	chessboard.placePiece(m_start, m_chessPiece);
 }
 
+std::string Promotion::toString() const
+{
+	std::string promotedPiece{ m_promotedPiece->toString().at(1) };
+	return {m_start.toString() + (m_isCapture ? "x" : "-") + m_end.toString() + "=" + promotedPiece};
+}
+
 // EnPassant methods
 EnPassant::EnPassant(ChessPiece* chessPiece, const Coordinates start, const Coordinates end, ChessPiece* capturedPiece)
 		: ChessMove(chessPiece, start, end, true, capturedPiece) {}
@@ -134,6 +151,11 @@ void EnPassant::undoMove(Chessboard& chessboard)
 	m_capturedPiece->setCapturedStatus(false);
 	Coordinates capturedPawnSquare{m_start.row, m_end.col};
 	chessboard.placePiece(capturedPawnSquare, m_capturedPiece);
+}
+
+std::string EnPassant::toString() const
+{
+	return {m_start.toString() + "x" + m_end.toString()};
 }
 
 // CastleShort methods
@@ -185,6 +207,11 @@ void CastleShort::undoMove(Chessboard& chessboard)
 	chessboard.placePiece(m_start, m_chessPiece);
 }
 
+std::string CastleShort::toString() const
+{
+	return "0-0";
+}
+
 // CastleLong methods
 CastleLong::CastleLong(ChessPiece* chessPiece, const Coordinates start, const Coordinates end)
 		: ChessMove(chessPiece, start, end, false, nullptr) {}
@@ -232,6 +259,11 @@ void CastleLong::undoMove(Chessboard& chessboard)
 	chessboard.removePiece(m_end);
 	m_chessPiece->decreaseMoveCount();
 	chessboard.placePiece(m_start, m_chessPiece);
+}
+
+std::string CastleLong::toString() const
+{
+	return "0-0-0";
 }
 
 // MoveHistory methods

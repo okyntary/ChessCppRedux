@@ -14,7 +14,7 @@ int main()
     model.setView(&view);
     Controller controller(&model, &view);
 
-    model.testMoves();
+    model.testCheckmate();
 
     bool isExit = false;
     while (!isExit)
