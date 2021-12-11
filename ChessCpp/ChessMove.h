@@ -10,18 +10,19 @@
 class ChessMove
 {
 protected:
-	ChessPiece* m_chessPiece{ nullptr };
+	std::shared_ptr<ChessPiece> m_chessPiece{ nullptr };
 	const Coordinates m_start;
 	const Coordinates m_end;
 	const bool m_isCapture{};
-	ChessPiece* m_capturedPiece{ nullptr };
+	std::shared_ptr<ChessPiece> m_capturedPiece{ nullptr };
 	
 public:
-	ChessMove(ChessPiece* chessPiece, const Coordinates start, const Coordinates end, const bool isCapture, ChessPiece* capturedPiece);
+	ChessMove(std::shared_ptr<ChessPiece> chessPiece, const Coordinates start, const Coordinates end, const bool isCapture, std::shared_ptr<ChessPiece> capturedPiece);
 	virtual void applyMove(Chessboard& chessboard, int turnNumber);
 	// Can only be done right after apply move is done
 	virtual void undoMove(Chessboard& chessboard);
-	Coordinates getEnd();
+	Coordinates getStart() const;
+	Coordinates getEnd() const;
 
 	virtual std::string toString() const;
 };
@@ -29,10 +30,10 @@ public:
 class Promotion : public ChessMove
 {
 private:
-	ChessPiece* m_promotedPiece{ nullptr };
+	std::shared_ptr<ChessPiece> m_promotedPiece{ nullptr };
 public:
-	Promotion(ChessPiece* chessPiece, const Coordinates start, const Coordinates end, const bool isCapture, ChessPiece* capturedPiece,
-			ChessPiece* promotedPiece);
+	Promotion(std::shared_ptr<ChessPiece> chessPiece, const Coordinates start, const Coordinates end, const bool isCapture, std::shared_ptr<ChessPiece> capturedPiece,
+			std::shared_ptr<ChessPiece> promotedPiece);
 	void applyMove(Chessboard& chessboard, int turnNumber);
 	void undoMove(Chessboard& chessboard);
 
@@ -42,7 +43,7 @@ public:
 class EnPassant : public ChessMove
 {
 public:
-	EnPassant(ChessPiece* chessPiece, const Coordinates start, const Coordinates end, ChessPiece* capturedPiece);
+	EnPassant(std::shared_ptr<ChessPiece> chessPiece, const Coordinates start, const Coordinates end, std::shared_ptr<ChessPiece> capturedPiece);
 	void applyMove(Chessboard& chessboard, int turnNumber);
 	void undoMove(Chessboard& chessboard);
 
@@ -52,7 +53,7 @@ public:
 class CastleShort : public ChessMove
 {
 public:
-	CastleShort(ChessPiece* chessPiece, const Coordinates start, const Coordinates end);
+	CastleShort(std::shared_ptr<ChessPiece> chessPiece, const Coordinates start, const Coordinates end);
 	void applyMove(Chessboard& chessboard, int turnNumber);
 	void undoMove(Chessboard& chessboard);
 
@@ -62,7 +63,7 @@ public:
 class CastleLong : public ChessMove
 {
 public:
-	CastleLong(ChessPiece* chessPiece, const Coordinates start, const Coordinates end);
+	CastleLong(std::shared_ptr<ChessPiece> chessPiece, const Coordinates start, const Coordinates end);
 	void applyMove(Chessboard& chessboard, int turnNumber);
 	void undoMove(Chessboard& chessboard);
 
@@ -77,6 +78,6 @@ private:
 public:
 	MoveHistory();
 	int getTurnNumber() const;
-	void addMove(std::shared_ptr<ChessMove>  chessMove);
+	void addMove(std::shared_ptr<ChessMove> chessMove);
 	void popMove();
 };

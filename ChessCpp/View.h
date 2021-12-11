@@ -43,9 +43,15 @@ public:
 	// Move-related methods:
 	// Show all currently valid moves
 	void showValidMoves() const;
+	void validMoveEntered() const;
 	void invalidMoveEntered() const;
 
+	// Utility methods
+	void resetChessboard() const;
+	void showCapturedPieces() const;
+
 	void isCheckmated() const;
+	void isChecked() const;
 	void isStalemated() const;
 
 	// Set the values of the respective members of the class

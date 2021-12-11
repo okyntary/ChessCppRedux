@@ -6,8 +6,8 @@
 #include "ChessMove.h"
 
 // ChessMove methods
-ChessMove::ChessMove(ChessPiece* chessPiece, const Coordinates start, const Coordinates end,
-		const bool isCapture, ChessPiece* capturedPiece)
+ChessMove::ChessMove(std::shared_ptr<ChessPiece> chessPiece, const Coordinates start, const Coordinates end,
+		const bool isCapture, std::shared_ptr<ChessPiece> capturedPiece)
 		: m_chessPiece{ chessPiece }, m_start{ start }, m_end{ end },
 		m_isCapture{ isCapture }, m_capturedPiece{ capturedPiece } {}
 
@@ -17,8 +17,7 @@ void ChessMove::applyMove(Chessboard& chessboard, int turnNumber)
 	assert(m_isCapture == chessboard.hasPiece(m_end));
 	if (m_isCapture)
 	{
-		assert(m_capturedPiece);
-		assert(m_capturedPiece == &(chessboard.getPiece(m_end)));
+		assert(m_capturedPiece != nullptr);
 		chessboard.removePiece(m_end);
 		m_capturedPiece->setAsCaptured();
 	}
@@ -30,13 +29,11 @@ void ChessMove::applyMove(Chessboard& chessboard, int turnNumber)
 	{
 		if (m_chessPiece->getPieceColor() == PieceColor::white)
 		{
-			WhitePawn* whitePawn{dynamic_cast<WhitePawn*>(m_chessPiece)};
-			whitePawn->setDoubleMoveTurn(turnNumber);
+			dynamic_cast<WhitePawn&>(*m_chessPiece).setDoubleMoveTurn(turnNumber);
 		}
 		else if (m_chessPiece->getPieceColor() == PieceColor::black)
 		{
-			BlackPawn* blackPawn{dynamic_cast<BlackPawn*>(m_chessPiece)};
-			blackPawn->setDoubleMoveTurn(turnNumber);
+			dynamic_cast<BlackPawn&>(*m_chessPiece).setDoubleMoveTurn(turnNumber);
 		}
 	}
 }
@@ -48,13 +45,11 @@ void ChessMove::undoMove(Chessboard& chessboard)
 	{
 		if (m_chessPiece->getPieceColor() == PieceColor::white)
 		{
-			WhitePawn* whitePawn{dynamic_cast<WhitePawn*>(m_chessPiece)};
-			whitePawn->setDoubleMoveTurn(0);
+			dynamic_cast<WhitePawn&>(*m_chessPiece).setDoubleMoveTurn(0);
 		}
 		else if (m_chessPiece->getPieceColor() == PieceColor::black)
 		{
-			BlackPawn* blackPawn{dynamic_cast<BlackPawn*>(m_chessPiece)};
-			blackPawn->setDoubleMoveTurn(0);
+			dynamic_cast<BlackPawn&>(*m_chessPiece).setDoubleMoveTurn(0);
 		}
 	}
 
@@ -68,7 +63,12 @@ void ChessMove::undoMove(Chessboard& chessboard)
 	chessboard.placePiece(m_start, m_chessPiece);
 }
 
-Coordinates ChessMove::getEnd()
+Coordinates ChessMove::getStart() const
+{
+	return m_start;
+}
+
+Coordinates ChessMove::getEnd() const
 {
 	return m_end;
 }
@@ -80,12 +80,12 @@ std::string ChessMove::toString() const
 	{
 		return {m_start.toString() + (m_isCapture ? "x" : "-") + m_end.toString()};
 	}
-	return {currentPiece + m_start.toString() + (m_isCapture ? "x" : "-") + currentPiece + m_end.toString()};
+	return {currentPiece + m_start.toString() + (m_isCapture ? "x" : "-") + m_end.toString()};
 }
 
 // Promotion methods
-Promotion::Promotion(ChessPiece* chessPiece, const Coordinates start, const Coordinates end, const bool isCapture, ChessPiece* capturedPiece,
-	ChessPiece* promotedPiece) : ChessMove(chessPiece, start, end, isCapture, capturedPiece), m_promotedPiece(promotedPiece) {}
+Promotion::Promotion(std::shared_ptr<ChessPiece> chessPiece, const Coordinates start, const Coordinates end, const bool isCapture, std::shared_ptr<ChessPiece> capturedPiece,
+	std::shared_ptr<ChessPiece> promotedPiece) : ChessMove(chessPiece, start, end, isCapture, capturedPiece), m_promotedPiece(promotedPiece) {}
 
 void Promotion::applyMove(Chessboard& chessboard, int turnNumber)
 {
@@ -97,7 +97,6 @@ void Promotion::applyMove(Chessboard& chessboard, int turnNumber)
 	if (m_isCapture)
 	{
 		assert(m_capturedPiece);
-		assert(m_capturedPiece == &(chessboard.getPiece(m_end)));
 		chessboard.removePiece(m_end);
 		m_capturedPiece->setAsCaptured();
 	}
@@ -122,18 +121,16 @@ std::string Promotion::toString() const
 }
 
 // EnPassant methods
-EnPassant::EnPassant(ChessPiece* chessPiece, const Coordinates start, const Coordinates end, ChessPiece* capturedPiece)
+EnPassant::EnPassant(std::shared_ptr<ChessPiece> chessPiece, const Coordinates start, const Coordinates end, std::shared_ptr<ChessPiece> capturedPiece)
 		: ChessMove(chessPiece, start, end, true, capturedPiece) {}
 
 void EnPassant::applyMove(Chessboard& chessboard, int turnNumber)
 {
 	assert(m_chessPiece->getPieceType() == PieceType::pawn);
-	assert(&(chessboard.getPiece(m_end)) != m_capturedPiece);
 	assert(m_start.row == 3 || m_start.row == 4);
 
 	Coordinates capturedPawnSquare{m_start.row, m_end.col};
 	assert(m_capturedPiece->getPieceType() == PieceType::pawn);
-	assert(&(chessboard.getPiece(capturedPawnSquare)) == m_capturedPiece);
 	chessboard.removePiece(capturedPawnSquare);
 	m_capturedPiece->setAsCaptured();
 
@@ -159,7 +156,7 @@ std::string EnPassant::toString() const
 }
 
 // CastleShort methods
-CastleShort::CastleShort(ChessPiece* chessPiece, const Coordinates start, const Coordinates end)
+CastleShort::CastleShort(std::shared_ptr<ChessPiece> chessPiece, const Coordinates start, const Coordinates end)
 		: ChessMove(chessPiece, start, end, false, nullptr) {}
 
 void CastleShort::applyMove(Chessboard& chessboard, int turnNumber)
@@ -174,9 +171,9 @@ void CastleShort::applyMove(Chessboard& chessboard, int turnNumber)
 
 	Coordinates castlingRookSquare{ m_start.row, 7 };
 	Coordinates targetRookSquare{ m_start.row, 5 };
-	assert(!chessboard.getPiece(castlingRookSquare).hasMoved());
+	assert(!chessboard.getPiece(castlingRookSquare)->hasMoved());
 	assert(!chessboard.hasPiece(targetRookSquare));
-	ChessPiece* castlingRook(&(chessboard.getPiece(castlingRookSquare)));
+	std::shared_ptr<ChessPiece> castlingRook(chessboard.getPiece(castlingRookSquare));
 	assert(castlingRook->getPieceType() == PieceType::rook);
 	
 	// Moving the king
@@ -194,7 +191,7 @@ void CastleShort::undoMove(Chessboard& chessboard)
 {
 	Coordinates castlingRookSquare{ m_start.row, 7 };
 	Coordinates targetRookSquare{ m_start.row, 5 };
-	ChessPiece* castlingRook(&(chessboard.getPiece(castlingRookSquare)));
+	std::shared_ptr<ChessPiece> castlingRook(chessboard.getPiece(castlingRookSquare));
 
 	// Unmoving the rook
 	chessboard.removePiece(targetRookSquare);
@@ -213,8 +210,9 @@ std::string CastleShort::toString() const
 }
 
 // CastleLong methods
-CastleLong::CastleLong(ChessPiece* chessPiece, const Coordinates start, const Coordinates end)
+CastleLong::CastleLong(std::shared_ptr<ChessPiece> chessPiece, const Coordinates start, const Coordinates end)
 		: ChessMove(chessPiece, start, end, false, nullptr) {}
+
 
 void CastleLong::applyMove(Chessboard& chessboard, int turnNumber)
 {
@@ -228,9 +226,9 @@ void CastleLong::applyMove(Chessboard& chessboard, int turnNumber)
 
 	Coordinates castlingRookSquare{ m_start.row, 0 };
 	Coordinates targetRookSquare{ m_start.row, 3 };
-	assert(!chessboard.getPiece(castlingRookSquare).hasMoved());
+	assert(!chessboard.getPiece(castlingRookSquare)->hasMoved());
 	assert(!chessboard.hasPiece(targetRookSquare));
-	ChessPiece* castlingRook(&(chessboard.getPiece(castlingRookSquare)));
+	std::shared_ptr<ChessPiece> castlingRook(chessboard.getPiece(castlingRookSquare));
 	assert(castlingRook->getPieceType() == PieceType::rook);
 	
 	// Moving the king
@@ -248,7 +246,7 @@ void CastleLong::undoMove(Chessboard& chessboard)
 {
 	Coordinates castlingRookSquare{ m_start.row, 0 };
 	Coordinates targetRookSquare{ m_start.row, 3 };
-	ChessPiece* castlingRook(&(chessboard.getPiece(castlingRookSquare)));
+	std::shared_ptr<ChessPiece> castlingRook(chessboard.getPiece(castlingRookSquare));
 
 	// Unmoving the rook
 	chessboard.removePiece(targetRookSquare);

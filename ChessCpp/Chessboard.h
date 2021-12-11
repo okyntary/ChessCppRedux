@@ -1,6 +1,7 @@
 #pragma once
 
 #include <array>
+#include <memory>
 
 #include "Coordinates.h"
 #include "ChessPiece.h"
@@ -9,17 +10,17 @@ class Square
 {
 private:
 	Coordinates m_coordinates;
-	ChessPiece* m_piece{};
+	std::shared_ptr<ChessPiece> m_piece{};
 	friend class View;
 	
 public:
 	Square(Coordinates coordinates = Coordinates{ 0, 0 });
 
-	void placePiece(ChessPiece* piece);
+	void placePiece(std::shared_ptr<ChessPiece> piece);
 	void removePiece();
 	bool hasPiece() const;
-	ChessPiece& getPiece();
-	const ChessPiece& getPiece() const;
+	std::shared_ptr<ChessPiece> getPiece();
+	std::shared_ptr<ChessPiece> getPiece() const;
 };
 
 class Chessboard
@@ -31,9 +32,9 @@ private:
 
 public:
 	Chessboard();
-	void placePiece(Coordinates coordinates, ChessPiece* piece);
+	void placePiece(Coordinates coordinates, std::shared_ptr<ChessPiece> piece);
 	void removePiece(Coordinates coordinates);
 	bool hasPiece(Coordinates coordinates) const;
-	ChessPiece& getPiece(Coordinates coordinates);
-	const ChessPiece& getPiece(Coordinates coordinates) const;
+	std::shared_ptr<ChessPiece> getPiece(Coordinates coordinates);
+	std::shared_ptr<ChessPiece> getPiece(Coordinates coordinates) const;
 };

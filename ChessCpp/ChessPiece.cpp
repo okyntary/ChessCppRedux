@@ -27,6 +27,12 @@ void ChessPiece::setAsCaptured()
 	m_isCaptured = true;
 }
 
+void ChessPiece::resetPiece()
+{
+	m_moveCount = 0;
+	m_isCaptured = false;
+}
+
 PieceColor ChessPiece::getPieceColor() const
 {
 	return m_color;
@@ -290,6 +296,13 @@ bool Pawn::hasDoubleMoved() const
 int Pawn::getDoubleMoveTurn() const
 {
 	return m_doubleMoveTurn;
+}
+
+void Pawn::resetPiece()
+{
+	m_moveCount = 0;
+	m_isCaptured = false;
+	m_doubleMoveTurn = 0;
 }
 
 WhitePawn::WhitePawn() : Pawn::Pawn(PieceColor::white) {};

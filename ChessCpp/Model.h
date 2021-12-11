@@ -26,7 +26,7 @@ private:
 	// Link to View
 	View* m_view{};
 
-	std::array<ChessPiece*, 32> m_chessPieces{};
+	std::array<std::shared_ptr<ChessPiece>, 32> m_chessPieces{};
 	Chessboard m_chessboard{};
 	std::vector<std::shared_ptr<ChessMove>> m_validMoves;
 	MoveHistory m_moveHistory{};
@@ -43,18 +43,20 @@ public:
 
 	// Methods related to the actual model
 	void initialize();
+	void resetChessboard();
+
 	int getTurnNumber() const;
-	ChessPiece& getPromotionPiece(PieceColor color, PieceType type) const;
+	std::shared_ptr<ChessPiece> getPromotionPiece(PieceColor color, PieceType type) const;
 	static Player getOtherPlayer(Player player);
 	void swapCurrentPlayer();
 
 	// Collision methods - all return true if the moving from the start to the end Coordinates is feasible given
 	// the chessboard
-	bool hasNoCollision(const ChessPiece& chessPiece, const Coordinates start, const Coordinates end) const;
-	bool hasNoQueenCollision(const ChessPiece& chessPiece, const Coordinates start, const Coordinates end) const;
-	bool hasNoRookCollision(const ChessPiece& chessPiece, const Coordinates start, const Coordinates end) const;
-	bool hasNoBishopCollision(const ChessPiece& chessPiece, const Coordinates start, const Coordinates end) const;
-	bool hasNoPawnCollision(const ChessPiece& chessPiece, const Coordinates start, const Coordinates end) const;
+	bool hasNoCollision(std::shared_ptr<ChessPiece> chessPiece, const Coordinates start, const Coordinates end) const;
+	bool hasNoQueenCollision(std::shared_ptr<ChessPiece> chessPiece, const Coordinates start, const Coordinates end) const;
+	bool hasNoRookCollision(std::shared_ptr<ChessPiece> chessPiece, const Coordinates start, const Coordinates end) const;
+	bool hasNoBishopCollision(std::shared_ptr<ChessPiece> chessPiece, const Coordinates start, const Coordinates end) const;
+	bool hasNoPawnCollision(std::shared_ptr<ChessPiece> chessPiece, const Coordinates start, const Coordinates end) const;
 
 	// Move-generating methods
 	// Generates all plausible moves on this board state, given the current player
@@ -64,10 +66,12 @@ public:
 	// Generates all valid moves on this board state, given the current player
 	std::vector<std::shared_ptr<ChessMove>> generateValidMoves();
 
-	// Check if the given move is inside m_validMoves
-	bool validateMove(const ChessMove& move) const;
+	// Check if the given move is inside m_validMoves and return it if it does exist. Return nullptr if it does not exist
+	std::shared_ptr<ChessMove> validateMove(const std::shared_ptr<ChessMove> move) const;
+	// Return the validMove that already exists in m_validMoves
+	std::shared_ptr<ChessMove> returnValidMove(std::shared_ptr<ChessMove>& move);
 	// Enter the move, called by the Controller
-	void enterMove(const std::string& move) const;
+	void enterMove(const std::string& move);
 
 	// Methods related to testing board state
 	Coordinates getPlayerKingSquare(Player player);
@@ -79,7 +83,6 @@ public:
 	bool isStalemated(Player player);
 
 	// Methods related to making moves
-	bool isValidMove(std::shared_ptr<ChessMove>& move); // Need to implement, to check whether move entered is valid
 	void simulateMove(std::shared_ptr<ChessMove>& move);
 	void undoMove(std::shared_ptr<ChessMove>& move);
 	void applyMove(std::shared_ptr<ChessMove>& move);

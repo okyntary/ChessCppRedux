@@ -17,6 +17,8 @@ class Controller
 		display,
 		validMoves,
 		enterMove,
+		resetChessboard,
+		showCaptured,
 		setSize,
 		toggleFlippedStatus,
 		toggleCoords,
@@ -29,15 +31,19 @@ private:
 
 public:
 	Controller(Model* const model, View* const view);
-	bool readInput() const;
-	static bool isPlausibleMove(const std::string& move);
+	bool readInput();
+	static bool isPlausibleMove(std::string& move);
 
 	bool quit() const;
 	bool display() const;
 	bool showValidMoves() const;
 	bool enterMove(const std::string& move) const;
+	bool showCapturedPieces() const;
+	bool resetChessboard();
+
 	bool setSize(const std::string& size) const;
 	bool toggleFlippedStatus() const;
 	bool toggleCoords() const;
+
 	bool null() const;
 };

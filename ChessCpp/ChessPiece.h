@@ -38,6 +38,8 @@ public:
 	void decreaseMoveCount();
 	void setCapturedStatus(bool isCaptured);
 	void setAsCaptured();
+	// Reset all piece data
+	virtual void resetPiece();
 
 	// Getter methods
 	PieceColor getPieceColor() const;
@@ -184,6 +186,7 @@ public:
 	Pawn(PieceColor color);
 	virtual const std::string toString() const override = 0;
 	virtual std::vector<Coordinates> getTargetSquares(Coordinates coordinates) const override = 0;
+	void resetPiece() override;
 
 	// Double move methods
 	void setDoubleMoveTurn(int doubleMoveTurn);

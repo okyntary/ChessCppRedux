@@ -2,7 +2,7 @@
 
 Square::Square(Coordinates coordinates) : m_coordinates(coordinates), m_piece(nullptr) {};
 
-void Square::placePiece(ChessPiece* piece)
+void Square::placePiece(std::shared_ptr<ChessPiece> piece)
 {
 	m_piece = piece;
 }
@@ -17,14 +17,14 @@ bool Square::hasPiece() const
 	return static_cast<bool>(m_piece);
 }
 
-ChessPiece& Square::getPiece()
+std::shared_ptr<ChessPiece> Square::getPiece()
 {
-	return *m_piece;
+	return m_piece;
 }
 
-const ChessPiece& Square::getPiece() const
+std::shared_ptr<ChessPiece> Square::getPiece() const
 {
-	return *m_piece;
+	return m_piece;
 }
 
 Chessboard::Chessboard()
@@ -38,7 +38,7 @@ Chessboard::Chessboard()
 	}
 }
 
-void Chessboard::placePiece(Coordinates coordinates, ChessPiece* piece)
+void Chessboard::placePiece(Coordinates coordinates, std::shared_ptr<ChessPiece> piece)
 {
 	m_chessboard[coordinates.row][coordinates.col].placePiece(piece);
 }
@@ -53,12 +53,12 @@ bool Chessboard::hasPiece(Coordinates coordinates) const
 	return m_chessboard[coordinates.row][coordinates.col].hasPiece();
 }
 
-ChessPiece& Chessboard::getPiece(Coordinates coordinates)
+std::shared_ptr<ChessPiece> Chessboard::getPiece(Coordinates coordinates)
 {
 	return m_chessboard[coordinates.row][coordinates.col].getPiece();
 }
 
-const ChessPiece& Chessboard::getPiece(Coordinates coordinates) const
+std::shared_ptr<ChessPiece> Chessboard::getPiece(Coordinates coordinates) const
 {
 	return m_chessboard[coordinates.row][coordinates.col].getPiece();
 }
