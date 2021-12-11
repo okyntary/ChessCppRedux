@@ -49,6 +49,7 @@ public:
 	// Utility methods
 	void resetChessboard() const;
 	void showCapturedPieces() const;
+	void showMoveHistory() const;
 
 	void isCheckmated() const;
 	void isChecked() const;

@@ -16,6 +16,6 @@ struct Coordinates
 	{
 		char file{static_cast<char>(row + 49)};
 		char rank{static_cast<char>(col + 65)};
-		return {rank, file};
+		return std::string{rank, file};
 	}
 };

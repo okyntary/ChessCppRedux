@@ -19,6 +19,7 @@ class Controller
 		enterMove,
 		resetChessboard,
 		showCaptured,
+		showMoveHistory,
 		setSize,
 		toggleFlippedStatus,
 		toggleCoords,
@@ -37,11 +38,12 @@ public:
 	bool quit() const;
 	bool display() const;
 	bool showValidMoves() const;
-	bool enterMove(const std::string& move) const;
+	bool enterMove(std::string move) const;
 	bool showCapturedPieces() const;
+	bool showMoveHistory() const;
 	bool resetChessboard();
 
-	bool setSize(const std::string& size) const;
+	bool setSize(std::string size) const;
 	bool toggleFlippedStatus() const;
 	bool toggleCoords() const;
 

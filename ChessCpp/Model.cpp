@@ -630,7 +630,7 @@ std::shared_ptr<ChessMove> Model::validateMove(const std::shared_ptr<ChessMove> 
 	return nullptr;
 }
 
-void Model::enterMove(const std::string& move)
+void Model::enterMove(std::string move)
 {
 	std::shared_ptr<ChessMove> enteredMove{};
 	if (move == "0-0") {

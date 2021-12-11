@@ -71,7 +71,7 @@ public:
 	// Return the validMove that already exists in m_validMoves
 	std::shared_ptr<ChessMove> returnValidMove(std::shared_ptr<ChessMove>& move);
 	// Enter the move, called by the Controller
-	void enterMove(const std::string& move);
+	void enterMove(std::string move);
 
 	// Methods related to testing board state
 	Coordinates getPlayerKingSquare(Player player);

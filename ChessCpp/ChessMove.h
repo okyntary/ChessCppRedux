@@ -80,4 +80,6 @@ public:
 	int getTurnNumber() const;
 	void addMove(std::shared_ptr<ChessMove> chessMove);
 	void popMove();
+
+	std::string toString() const;
 };

@@ -61,7 +61,7 @@ bool ChessPiece::isCorrectPiece(PieceColor color, PieceType type) const
 // NullPiece methods
 NullPiece::NullPiece() : ChessPiece(PieceColor::null, PieceType::null) {};
 
-const std::string NullPiece::toString() const
+std::string NullPiece::toString() const
 {
 	return "NP";
 }
@@ -93,14 +93,14 @@ std::vector<Coordinates> King::getTargetSquares(Coordinates coordinates) const
 
 WhiteKing::WhiteKing() : King::King(PieceColor::white) {};
 
-const std::string WhiteKing::toString() const
+std::string WhiteKing::toString() const
 {
 	return "WK";
 }
 
 BlackKing::BlackKing() : King::King(PieceColor::black) {};
 
-const std::string BlackKing::toString() const
+std::string BlackKing::toString() const
 {
 	return "BK";
 }
@@ -144,14 +144,14 @@ std::vector<Coordinates> Queen::getTargetSquares(Coordinates coordinates) const
 
 WhiteQueen::WhiteQueen() : Queen::Queen(PieceColor::white) {};
 
-const std::string WhiteQueen::toString() const
+std::string WhiteQueen::toString() const
 {
 	return "WQ";
 }
 
 BlackQueen::BlackQueen() : Queen::Queen(PieceColor::black) {};
 
-const std::string BlackQueen::toString() const
+std::string BlackQueen::toString() const
 {
 	return "BQ";
 }
@@ -179,14 +179,14 @@ std::vector<Coordinates> Rook::getTargetSquares(Coordinates coordinates) const
 
 WhiteRook::WhiteRook() : Rook::Rook(PieceColor::white) {};
 
-const std::string WhiteRook::toString() const
+std::string WhiteRook::toString() const
 {
 	return "WR";
 }
 
 BlackRook::BlackRook() : Rook::Rook(PieceColor::black) {};
 
-const std::string BlackRook::toString() const
+std::string BlackRook::toString() const
 {
 	return "BR";
 }
@@ -219,14 +219,14 @@ std::vector<Coordinates> Bishop::getTargetSquares(Coordinates coordinates) const
 
 WhiteBishop::WhiteBishop() : Bishop::Bishop(PieceColor::white) {};
 
-const std::string WhiteBishop::toString() const
+std::string WhiteBishop::toString() const
 {
 	return "WB";
 }
 
 BlackBishop::BlackBishop() : Bishop::Bishop(PieceColor::black) {};
 
-const std::string BlackBishop::toString() const
+std::string BlackBishop::toString() const
 {
 	return "BB";
 }
@@ -263,14 +263,14 @@ std::vector<Coordinates> Knight::getTargetSquares(Coordinates coordinates) const
 
 WhiteKnight::WhiteKnight() : Knight::Knight(PieceColor::white) {};
 
-const std::string WhiteKnight::toString() const
+std::string WhiteKnight::toString() const
 {
 	return "WN";
 }
 
 BlackKnight::BlackKnight() : Knight::Knight(PieceColor::black) {};
 
-const std::string BlackKnight::toString() const
+std::string BlackKnight::toString() const
 {
 	return "BN";
 }
@@ -307,7 +307,7 @@ void Pawn::resetPiece()
 
 WhitePawn::WhitePawn() : Pawn::Pawn(PieceColor::white) {};
 
-const std::string WhitePawn::toString() const
+std::string WhitePawn::toString() const
 {
 	return "WP";
 }
@@ -334,7 +334,7 @@ std::vector<Coordinates> WhitePawn::getTargetSquares(Coordinates coordinates) co
 
 BlackPawn::BlackPawn() : Pawn::Pawn(PieceColor::black) {};
 
-const std::string BlackPawn::toString() const
+std::string BlackPawn::toString() const
 {
 	return "BP";
 }

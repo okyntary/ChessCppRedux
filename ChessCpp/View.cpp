@@ -28,8 +28,8 @@ void View::showValidMoves() const
 	Player currentPlayer{ m_model->m_currentPlayer };
 	for (auto& validMove : m_model->m_validMoves)
 	{
-		std::string turn{std::to_string(turnNumber) + ". "};
-		std::string playerColor{currentPlayer == Player::white ? "" : "..."};
+		const std::string turn{std::to_string(turnNumber) + ". "};
+		const std::string playerColor{currentPlayer == Player::white ? "" : "..."};
 		std::cout << turn + playerColor + validMove->toString() + '\n';
 	}
 }
@@ -52,30 +52,36 @@ void View::resetChessboard() const
 void View::showCapturedPieces() const
 {
 	std::cout << "Captured pieces: \n";
-	std::vector<std::shared_ptr<ChessPiece>> capturedPieces{};
+	std::string capturedPiecesString{};
 	for (auto& piece : m_model->m_chessPieces)
 	{
-		if (piece->isCaptured()) capturedPieces.push_back(piece);
+		if (piece->isCaptured()) capturedPiecesString += piece->toString() + "\n";
 	}
-	std::string capturedPiecesString{};
 	std::cout << capturedPiecesString;
+}
+
+void View::showMoveHistory() const
+{
+	std::cout << "Moves played so far:\n";
+	const std::string moveHistoryString{m_model->m_moveHistory.toString()};
+	std::cout << m_model->m_moveHistory.toString();
 }
 
 void View::isCheckmated() const
 {
-	std::string currentPlayer{m_model->m_currentPlayer == Player::white ? "White" : "Black"};
+	const std::string currentPlayer{m_model->m_currentPlayer == Player::white ? "White" : "Black"};
 	std::cout << currentPlayer << " is checkmated.\n";
 }
 
 void View::isChecked() const
 {
-	std::string currentPlayer{m_model->m_currentPlayer == Player::white ? "White" : "Black"};
+	const std::string currentPlayer{m_model->m_currentPlayer == Player::white ? "White" : "Black"};
 	std::cout << currentPlayer << " is checked.\n";
 }
 
 void View::isStalemated() const
 {
-	std::string currentPlayer{m_model->m_currentPlayer == Player::white ? "White" : "Black"};
+	const std::string currentPlayer{m_model->m_currentPlayer == Player::white ? "White" : "Black"};
 	std::cout << currentPlayer << " is stalemated.\n";
 }
 void View::setSize(Size size)

@@ -75,7 +75,7 @@ Coordinates ChessMove::getEnd() const
 
 std::string ChessMove::toString() const
 {
-	std::string currentPiece{ m_chessPiece->toString().at(1) };
+	const std::string currentPiece{ m_chessPiece->toString().at(1) };
 	if (m_chessPiece->getPieceType() == PieceType::pawn)
 	{
 		return {m_start.toString() + (m_isCapture ? "x" : "-") + m_end.toString()};
@@ -116,7 +116,7 @@ void Promotion::undoMove(Chessboard& chessboard)
 
 std::string Promotion::toString() const
 {
-	std::string promotedPiece{ m_promotedPiece->toString().at(1) };
+	const std::string promotedPiece{ m_promotedPiece->toString().at(1) };
 	return {m_start.toString() + (m_isCapture ? "x" : "-") + m_end.toString() + "=" + promotedPiece};
 }
 
@@ -280,4 +280,17 @@ void MoveHistory::addMove(std::shared_ptr<ChessMove> move)
 void MoveHistory::popMove()
 {
 	m_moveHistory.pop_back();
+}
+
+std::string MoveHistory::toString() const
+{
+	std::string moveHistoryString{};
+	for (int i{ 0 }; i < m_moveHistory.size(); ++i)
+	{
+		std::shared_ptr<ChessMove> move{ m_moveHistory[i] };
+		std::string turnNumber{ i % 2 == 0 ? std::to_string(1 + i / 2) + (i % 2 == 0 ? ".  " : "   ")
+				: (i % 2 == 0 ? ".  " : "   ") };
+		moveHistoryString += turnNumber + move->toString() + (i % 2 == 0 ? "" : "\n");
+	}
+	return moveHistoryString;
 }

@@ -50,6 +50,10 @@ bool Controller::readInput()
 	{
 		command = Command::showCaptured;
 	}
+	else if (input == "HISTORY" || input == "HIS")
+	{
+		command = Command::showMoveHistory;
+	}
 	else if (input == "SIZES" || input == "SS")
 	{
 		command = Command::setSize;
@@ -92,6 +96,8 @@ bool Controller::readInput()
 		return resetChessboard();
 	case Controller::Command::showCaptured:
 		return showCapturedPieces();
+	case Controller::Command::showMoveHistory:
+		return showMoveHistory();
 	case Controller::Command::setSize:
 		return setSize(params.at(0));
 	case Controller::Command::toggleFlippedStatus:
@@ -140,9 +146,21 @@ bool Controller::showValidMoves() const
 	return false;
 }
 
-bool Controller::enterMove(const std::string& move) const
+bool Controller::enterMove(std::string move) const
 {
 	m_model->enterMove(move);
+	return false;
+}
+
+bool Controller::showCapturedPieces() const
+{
+	m_view->showCapturedPieces();
+	return false;
+}
+
+bool Controller::showMoveHistory() const
+{
+	m_view->showMoveHistory();
 	return false;
 }
 
@@ -153,13 +171,7 @@ bool Controller::resetChessboard()
 	return false;
 }
 
-bool Controller::showCapturedPieces() const
-{
-	m_view->showCapturedPieces();
-	return false;
-}
-
-bool Controller::setSize(const std::string& size) const
+bool Controller::setSize(std::string size) const
 {
 	std::cout << "Setting chessboard size to " << size << ".\n";
 	View::Size viewSize{};
