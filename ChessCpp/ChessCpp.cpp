@@ -2,16 +2,22 @@
 
 #include <iostream>
 
-#include "View.h"
+#include "Engine.h"
 #include "Model.h"
+#include "View.h"
 #include "Controller.h"
 #include "ChessPiece.h"
 
 int main()
 {
     Model model;
+
     View view{ &model };
     model.setView(&view);
+
+    Engine engine{ &model };
+    model.setEngine(&engine);
+
     Controller controller(&model, &view);
 
     bool isExit = false;

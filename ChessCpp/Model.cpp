@@ -25,6 +25,16 @@ void Model::updateView() const
 	m_view->display();
 }
 
+void Model::setEngine(Engine* engine)
+{
+	m_engine = engine;
+}
+
+void Model::updateEngine() const
+{
+	m_engine->update();
+}
+
 void Model::initialize()
 {
 	for (int i{ 0 }; i < 32; ++i)
@@ -237,13 +247,13 @@ std::shared_ptr<ChessPiece> Model::getPromotionPiece(PieceColor color, PieceType
 		switch (type)
 		{
 		case PieceType::queen:
-			return std::shared_ptr<WhiteQueen>();
+			return std::make_shared<WhiteQueen>();
 		case PieceType::rook:
-			return std::shared_ptr<WhiteRook>();
+			return std::make_shared<WhiteRook>();
 		case PieceType::bishop:
-			return std::shared_ptr<WhiteBishop>();
+			return std::make_shared<WhiteBishop>();
 		case PieceType::knight:
-			return std::shared_ptr<WhiteKnight>();
+			return std::make_shared<WhiteKnight>();
 		default:
 			break;
 		}
@@ -253,13 +263,13 @@ std::shared_ptr<ChessPiece> Model::getPromotionPiece(PieceColor color, PieceType
 		switch (type)
 		{
 		case PieceType::queen:
-			return std::shared_ptr<BlackQueen>();
+			return std::make_shared<BlackQueen>();
 		case PieceType::rook:
-			return std::shared_ptr<BlackRook>();
+			return std::make_shared<BlackRook>();
 		case PieceType::bishop:
-			return std::shared_ptr<BlackBishop>();
+			return std::make_shared<BlackBishop>();
 		case PieceType::knight:
-			return std::shared_ptr<BlackKnight>();
+			return std::make_shared<BlackKnight>();
 		default:
 			break;
 		}
@@ -447,9 +457,11 @@ std::vector<std::shared_ptr<ChessMove>> Model::generatePlausibleMoves(Player pla
 					// replace existing plausible moves
 					PieceColor pieceColor = currentPiece->getPieceColor();
 					PieceType pieceType = currentPiece->getPieceType();
-					bool isPawn = pieceType == PieceType::pawn;
-					bool isOnSeventhRank = pieceColor == PieceColor::white ? currentSquare.row == 6 : currentSquare.row == 1;
-					if (isPawn && isOnSeventhRank)
+					bool isPawn{ pieceType == PieceType::pawn };
+					bool isOnSeventhRank{ pieceColor == PieceColor::white ? currentSquare.row == 6 : currentSquare.row == 1 };
+					bool isPromotionCapture{ isCapture && currentSquare.col != targetSquare.col };
+					bool isPromotionMove{ !isCapture && currentSquare.col == targetSquare.col };
+					if (isPawn && isOnSeventhRank && (isPromotionCapture || isPromotionMove))
 					{
 						plausibleMoves.push_back(std::make_shared<Promotion>(currentPiece, currentSquare, targetSquare,
 								isCapture, capturedPiece, getPromotionPiece(pieceColor, PieceType::queen)));
@@ -635,33 +647,45 @@ void Model::enterMove(std::string move)
 	std::shared_ptr<ChessMove> enteredMove{};
 	if (move == "0-0") {
 		Coordinates kingSquare{ getPlayerKingSquare(m_currentPlayer) };
-		std::shared_ptr<ChessPiece> king{ m_chessboard.getPiece(kingSquare) } ;
+		std::shared_ptr<ChessPiece> king{ m_chessboard.getPiece(kingSquare) };
 		Coordinates twoSquaresAway{ kingSquare.row, 6 };
 		enteredMove = std::make_shared<CastleShort>(king, kingSquare, twoSquaresAway);
 	}
 	else if (move == "0-0-0")
 	{
 		Coordinates kingSquare{ getPlayerKingSquare(m_currentPlayer) };
-		std::shared_ptr<ChessPiece> king{ m_chessboard.getPiece(kingSquare) } ;
+		std::shared_ptr<ChessPiece> king{ m_chessboard.getPiece(kingSquare) };
 		Coordinates twoSquaresAway{ kingSquare.row, 2 };
 		enteredMove = std::make_shared<CastleLong>(king, kingSquare, twoSquaresAway);
 	}
 	else
 	{
 		assert(move.size() == 4 || move.size() == 5);
-	
-		Coordinates startSquare{static_cast<int>(move[1] - 49), static_cast<int>(move[0] - 65)};
-		Coordinates endSquare{static_cast<int>(move[3] - 49), static_cast<int>(move[2] - 65)};
+
+		Coordinates startSquare{ static_cast<int>(move[1] - 49), static_cast<int>(move[0] - 65) };
+		Coordinates endSquare{ static_cast<int>(move[3] - 49), static_cast<int>(move[2] - 65) };
 
 		std::shared_ptr<ChessPiece> currentPiece{ m_chessboard.getPiece(startSquare) };
-		bool isCapture{m_chessboard.hasPiece(endSquare)};
-		std::shared_ptr<ChessPiece> capturedPiece{isCapture ? m_chessboard.getPiece(endSquare) : nullptr};
+		bool isCapture{ m_chessboard.hasPiece(endSquare) };
+		std::shared_ptr<ChessPiece> capturedPiece{ isCapture ? m_chessboard.getPiece(endSquare) : nullptr };
 		enteredMove = std::make_shared<ChessMove>(currentPiece, startSquare, endSquare, isCapture, capturedPiece);
 	}
 
-	std::shared_ptr<ChessMove> validMove{validateMove(enteredMove)};
-	if (validMove) applyMove(validMove);
-	else m_view->invalidMoveEntered();
+	std::shared_ptr<ChessMove> validMove{ validateMove(enteredMove) };
+	if (validMove)
+	{
+		applyMove(validMove);
+		// updateEngine();
+	}
+	else
+	{
+		m_view->invalidMoveEntered();
+	}
+}
+
+void Model::enterMove(std::shared_ptr<ChessMove> move)
+{
+	applyMove(move);
 }
 
 Coordinates Model::getPlayerKingSquare(Player player)

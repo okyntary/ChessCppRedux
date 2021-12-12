@@ -290,7 +290,8 @@ std::string MoveHistory::toString() const
 		std::shared_ptr<ChessMove> move{ m_moveHistory[i] };
 		std::string turnNumber{ i % 2 == 0 ? std::to_string(1 + i / 2) + (i % 2 == 0 ? ".  " : "   ")
 				: (i % 2 == 0 ? ".  " : "   ") };
-		moveHistoryString += turnNumber + move->toString() + (i % 2 == 0 ? "" : "\n");
+		moveHistoryString += turnNumber + move->toString();
+		moveHistoryString += (i % 2 == 0 ? "" : "\n");
 	}
 	return moveHistoryString;
 }

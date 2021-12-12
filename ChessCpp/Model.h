@@ -4,7 +4,9 @@
 #include <memory>
 #include <vector>
 
+class Engine;
 class View;
+#include "Engine.h"
 #include "View.h" 
 
 #include "Chessboard.h"
@@ -25,6 +27,7 @@ private:
 	// Circular dependency here, acceptable since scope of program is small
 	// Link to View
 	View* m_view{};
+	Engine* m_engine{};
 
 	std::array<std::shared_ptr<ChessPiece>, 32> m_chessPieces{};
 	Chessboard m_chessboard{};
@@ -32,6 +35,7 @@ private:
 	MoveHistory m_moveHistory{};
 	Player m_currentPlayer{ Player::white };
 
+	friend class Engine;
 	friend class View;
 
 public:
@@ -40,6 +44,9 @@ public:
 	void setView(View* view);
 	// Call view to update based on model
 	void updateView() const;
+
+	void setEngine(Engine* engine);
+	void updateEngine() const;
 
 	// Methods related to the actual model
 	void initialize();
@@ -68,10 +75,10 @@ public:
 
 	// Check if the given move is inside m_validMoves and return it if it does exist. Return nullptr if it does not exist
 	std::shared_ptr<ChessMove> validateMove(const std::shared_ptr<ChessMove> move) const;
-	// Return the validMove that already exists in m_validMoves
-	std::shared_ptr<ChessMove> returnValidMove(std::shared_ptr<ChessMove>& move);
 	// Enter the move, called by the Controller
 	void enterMove(std::string move);
+	// Enter the move selected by the Engine
+	void enterMove(std::shared_ptr<ChessMove> move);
 
 	// Methods related to testing board state
 	Coordinates getPlayerKingSquare(Player player);
