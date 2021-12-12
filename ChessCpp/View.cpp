@@ -4,9 +4,9 @@
 #include <string>
 
 const std::string View::mediumUpperLineBreak{ " ______ ______ ______ ______ ______ ______ ______ ______ \n"
-						                      "|      |      |      |      |      |      |      |      |\n" };
+											  "|      |      |      |      |      |      |      |      |\n" };
 const std::string View::mediumInnerLineBreak{ "|______|______|______|______|______|______|______|______|\n"
-							            	  "|      |      |      |      |      |      |      |      |\n" };
+											  "|      |      |      |      |      |      |      |      |\n" };
 const std::string View::mediumLowerLineBreak{ "|______|______|______|______|______|______|______|______|\n" };
 
 
@@ -18,7 +18,7 @@ const std::string View::largeInnerLineBreak{ "|          |          |          |
 							                 "|          |          |          |          |          |          |          |          |\n"
 							                 "|          |          |          |          |          |          |          |          |\n" };
 const std::string View::largeLowerLineBreak{ "|          |          |          |          |          |          |          |          |\n"
-                                             "|__________|__________|__________|__________|__________|__________|__________|__________|\n" };
+											 "|__________|__________|__________|__________|__________|__________|__________|__________|\n" };
 
 void View::showValidMoves() const
 {

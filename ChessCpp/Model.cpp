@@ -214,7 +214,7 @@ void Model::resetChessboard()
 		case 29:
 		case 30:
 		case 31:
-			m_chessboard.placePiece(Coordinates{ 6, 24 - i }, m_chessPieces[i]);
+			m_chessboard.placePiece(Coordinates{ 6, i - 24 }, m_chessPieces[i]);
 			break;
 		default:
 			break;
@@ -474,7 +474,7 @@ std::vector<std::shared_ptr<ChessMove>> Model::generatePlausibleMoves(Player pla
 
 std::vector<std::shared_ptr<ChessMove>> Model::generateValidMoves()
 {
-	std::vector<std::shared_ptr<ChessMove>> playerPlausibleMoves{ generatePlausibleMoves() };
+	std::vector<std::shared_ptr<ChessMove>> playerPlausibleMoves = generatePlausibleMoves();
 	
 	// Account for castling
 	bool isCurrentlyChecked{ isChecked() };
@@ -494,7 +494,7 @@ std::vector<std::shared_ptr<ChessMove>> Model::generateValidMoves()
 	bool queenRookHasNotMoved{ m_chessboard.hasPiece({castlingRow, 0})
 			&& queenRook->isCorrectPiece(currentPlayer, PieceType::rook) && !queenRook->hasMoved() };
 
-	std::vector<std::shared_ptr<ChessMove>> opponentPlausibleMoves{ generatePlausibleMoves(getOtherPlayer(m_currentPlayer)) };
+	std::vector<std::shared_ptr<ChessMove>> opponentPlausibleMoves = generatePlausibleMoves(getOtherPlayer(m_currentPlayer));
 
 	// Check if short castling is possible
 	if (!isCurrentlyChecked && kingHasNotMoved && kingRookHasNotMoved)
@@ -834,73 +834,4 @@ void Model::testPlausibleMoves()
 	std::vector<std::shared_ptr<ChessMove>> plausibleMovesBlack{ generatePlausibleMoves(Player::black) };
 	plausibleMovesWhite;
 	plausibleMovesBlack;
-}
-
-void Model::testCheckmate()
-{
-	std::shared_ptr<ChessMove> move1{ std::make_shared<ChessMove>(m_chessPieces[13], Coordinates{1, 5}, Coordinates{3, 5}, false, nullptr) };
-	applyMove(move1);
-
-	std::shared_ptr<ChessMove> move2{ std::make_shared<ChessMove>(m_chessPieces[28], Coordinates{6, 4}, Coordinates{4, 4}, false, nullptr) };
-	applyMove(move2);
-
-	std::shared_ptr<ChessMove> move3{ std::make_shared<ChessMove>(m_chessPieces[14], Coordinates{1, 6}, Coordinates{3, 6}, false, nullptr) };
-	applyMove(move3);
-	
-	std::shared_ptr<ChessMove> move4{ std::make_shared<ChessMove>(m_chessPieces[17], Coordinates{7, 3}, Coordinates{3, 7}, false, nullptr) };
-	applyMove(move4);
-
-	//std::cout << "Is checkmated: " << isCheckmated() << '\n';
-}
-
-void Model::testTargetSquares()
-{
-	std::vector<Coordinates> targetSquares1 = m_chessPieces[6]->getTargetSquares(Coordinates{ 0, 1 });
-	std::cout << "Knight at b1:\n";
-	for (int i{ 0 }; i < targetSquares1.size(); ++i)
-	{
-		std::cout << "(" << targetSquares1.at(i).row << ", " << targetSquares1.at(i).col << ")\n";
-	}
-
-	std::cout << "Rook at a1:\n";
-	std::vector<Coordinates> targetSquares2 = m_chessPieces[2]->getTargetSquares(Coordinates{ 0, 0 });
-	for (int i{ 0 }; i < targetSquares2.size(); ++i)
-	{
-		std::cout << "(" << targetSquares2.at(i).row << ", " << targetSquares2.at(i).col << ")\n";
-	}
-
-	std::cout << "Bishop at c1:\n";
-	std::vector<Coordinates> targetSquares3 = m_chessPieces[4]->getTargetSquares(Coordinates{ 0, 2 });
-	for (int i{ 0 }; i < targetSquares3.size(); ++i)
-	{
-		std::cout << "(" << targetSquares3.at(i).row << ", " << targetSquares3.at(i).col << ")\n";
-	}
-
-	std::cout << "Queen at d1:\n";
-	std::vector<Coordinates> targetSquares4 = m_chessPieces[1]->getTargetSquares(Coordinates{ 0, 3 });
-	for (int i{ 0 }; i < targetSquares4.size(); ++i)
-	{
-		std::cout << "(" << targetSquares4.at(i).row << ", " << targetSquares4.at(i).col << ")\n";
-	}
-
-	std::cout << "King at e1:\n";
-	std::vector<Coordinates> targetSquares5 = m_chessPieces[0]->getTargetSquares(Coordinates{ 0, 4 });
-	for (int i{ 0 }; i < targetSquares5.size(); ++i)
-	{
-		std::cout << "(" << targetSquares5.at(i).row << ", " << targetSquares5.at(i).col << ")\n";
-	}
-
-	std::cout << "Pawn at h2:\n";
-	std::vector<Coordinates> targetSquares6 = m_chessPieces[15]->getTargetSquares(Coordinates{ 1, 7 });
-	for (int i{ 0 }; i < targetSquares6.size(); ++i)
-	{
-		std::cout << "(" << targetSquares6.at(i).row << ", " << targetSquares6.at(i).col << ")\n";
-	}
-
-	std::cout << "Pawn at d7:\n";
-	std::vector<Coordinates> targetSquares7 = m_chessPieces[27]->getTargetSquares(Coordinates{ 6, 3 });
-	for (int i{ 0 }; i < targetSquares7.size(); ++i)
-	{
-		std::cout << "(" << targetSquares7.at(i).row << ", " << targetSquares7.at(i).col << ")\n";
-	}
 }

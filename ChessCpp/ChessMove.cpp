@@ -183,7 +183,7 @@ void CastleShort::applyMove(Chessboard& chessboard, int turnNumber)
 
 	// Moving the rook
 	chessboard.removePiece(castlingRookSquare);
-	m_chessPiece->increaseMoveCount();
+	castlingRook->increaseMoveCount();
 	chessboard.placePiece(targetRookSquare, castlingRook);
 }
 
@@ -191,7 +191,7 @@ void CastleShort::undoMove(Chessboard& chessboard)
 {
 	Coordinates castlingRookSquare{ m_start.row, 7 };
 	Coordinates targetRookSquare{ m_start.row, 5 };
-	std::shared_ptr<ChessPiece> castlingRook(chessboard.getPiece(castlingRookSquare));
+	std::shared_ptr<ChessPiece> castlingRook(chessboard.getPiece(targetRookSquare));
 
 	// Unmoving the rook
 	chessboard.removePiece(targetRookSquare);
@@ -238,7 +238,7 @@ void CastleLong::applyMove(Chessboard& chessboard, int turnNumber)
 
 	// Moving the rook
 	chessboard.removePiece(castlingRookSquare);
-	m_chessPiece->increaseMoveCount();
+	castlingRook->increaseMoveCount();
 	chessboard.placePiece(targetRookSquare, castlingRook);
 }
 
@@ -246,7 +246,7 @@ void CastleLong::undoMove(Chessboard& chessboard)
 {
 	Coordinates castlingRookSquare{ m_start.row, 0 };
 	Coordinates targetRookSquare{ m_start.row, 3 };
-	std::shared_ptr<ChessPiece> castlingRook(chessboard.getPiece(castlingRookSquare));
+	std::shared_ptr<ChessPiece> castlingRook(chessboard.getPiece(targetRookSquare));
 
 	// Unmoving the rook
 	chessboard.removePiece(targetRookSquare);

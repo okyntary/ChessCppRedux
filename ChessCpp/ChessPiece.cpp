@@ -1,3 +1,4 @@
+#include <cassert>
 #include <iostream>
 
 #include <string>
@@ -15,6 +16,7 @@ void ChessPiece::increaseMoveCount()
 void ChessPiece::decreaseMoveCount()
 {
 	if (m_moveCount > 0) --m_moveCount;
+	assert(m_moveCount >= 0);
 }
 
 void ChessPiece::setCapturedStatus(bool isCaptured)

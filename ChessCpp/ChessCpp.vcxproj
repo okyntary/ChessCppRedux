@@ -72,6 +72,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -145,6 +146,7 @@
     <ClCompile Include="ChessMove.cpp" />
     <ClCompile Include="ChessPiece.cpp" />
     <ClCompile Include="Controller.cpp" />
+    <ClCompile Include="Engine.cpp" />
     <ClCompile Include="Model.cpp" />
     <ClCompile Include="View.cpp" />
   </ItemGroup>
@@ -154,6 +156,7 @@
     <ClInclude Include="ChessPiece.h" />
     <ClInclude Include="Controller.h" />
     <ClInclude Include="Coordinates.h" />
+    <ClInclude Include="Engine.h" />
     <ClInclude Include="Model.h" />
     <ClInclude Include="View.h" />
   </ItemGroup>

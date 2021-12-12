@@ -90,6 +90,4 @@ public:
 	// Miscellaneous test methods
 	void testMoves();
 	void testPlausibleMoves();
-	void testCheckmate();
-	void testTargetSquares();
 };
