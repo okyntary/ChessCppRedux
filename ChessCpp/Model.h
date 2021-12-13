@@ -52,6 +52,7 @@ public:
 	// Methods related to the actual model
 	void initialize();
 	void resetChessboard();
+	void swapColors();
 
 	int getTurnNumber() const;
 	std::shared_ptr<ChessPiece> getPromotionPiece(PieceColor color, PieceType type) const;

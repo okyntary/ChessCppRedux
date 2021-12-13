@@ -56,6 +56,11 @@ void View::resetChessboard() const
 	std::cout << "Chessboard reset.";
 }
 
+void View::showSwapColors() const
+{
+	std::cout << "Swapping colors.";
+}
+
 void View::showCapturedPieces() const
 {
 	std::cout << "Captured pieces: \n";
@@ -72,6 +77,42 @@ void View::showMoveHistory() const
 	std::cout << "Moves played so far:\n";
 	const std::string moveHistoryString{m_model->m_moveHistory.toString()};
 	std::cout << m_model->m_moveHistory.toString();
+}
+
+void View::showGameStarted() const
+{
+	std::cout << "Game has started.\n";
+}
+
+void View::showGameNotStarted() const
+{
+	std::cout << "Game has not started yet.\n";
+}
+
+void View::showGameAlreadyStarted() const
+{
+	std::cout << "Game has already started.\n";
+}
+
+void View::showChooseColor(Player player) const
+{
+	if (player == Player::null)
+	{
+		std::cout << "No player.\n";
+	}
+	else if (player == Player::white)
+	{
+		std::cout << "White to play.\n";
+	}
+	else if (player == Player::black)
+	{
+		std::cout << "Black to play.\n";
+	}
+}
+
+void View::showCannotChooseColor() const
+{
+	std::cout << "The game has already started. Reset the game to change colors.\n";
 }
 
 void View::isCheckmated() const

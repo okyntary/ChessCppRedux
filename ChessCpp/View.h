@@ -47,10 +47,18 @@ public:
 	void invalidMoveEntered() const;
 	void undoLastMove();
 
-	// Utility methods
 	void resetChessboard() const;
+	void showSwapColors() const;
+
+	// Utility methods
 	void showCapturedPieces() const;
 	void showMoveHistory() const;
+
+	void showGameStarted() const;
+	void showGameNotStarted() const;
+	void showGameAlreadyStarted() const;
+	void showChooseColor(Player player) const;
+	void showCannotChooseColor() const;
 
 	void isCheckmated() const;
 	void isChecked() const;

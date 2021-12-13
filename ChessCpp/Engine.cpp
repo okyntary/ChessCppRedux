@@ -59,7 +59,7 @@ Engine::Engine(Model* model) : m_model(model), m_evaluator() {}
 
 void Engine::playMove() const
 {
-	const int presetDepth{ 3 };
+	constexpr int presetDepth{ 3 };
 	std::shared_ptr<ChessMove> chosenMove{searchForBestMove(presetDepth, m_model->m_currentPlayer)};
 	m_model->enterMove(chosenMove);
 }
@@ -201,4 +201,60 @@ std::shared_ptr<ChessMove> Engine::searchForBestMove(int depth, Player currentPl
 int Engine::evaluate() const
 {
 	return m_evaluator.evaluate(m_model);
+}
+
+int Engine::evaluate(int depth) const
+{
+	return alphaBeta(depth, INT_MIN, INT_MAX);
+}
+
+int Engine::alphaBeta(int depth, int alpha, int beta) const
+{
+	Player currentPlayer{m_model->m_currentPlayer};
+	if (depth == 0)
+	{
+		return evaluate();
+	}
+	else if (currentPlayer == Player::white)
+	{
+		int bestSoFar{ INT_MIN };
+		std::vector<std::shared_ptr<ChessMove>> validMoves{m_model->generateValidMoves()};
+		for (auto validMove : validMoves)
+		{
+			m_model->simulateMove(validMove);
+			int simulatedEvaluation{ alphaBeta(depth - 1, alpha, beta) };
+			m_model->undoMove(validMove);
+			if (simulatedEvaluation > bestSoFar)
+			{
+				bestSoFar = simulatedEvaluation;
+			}
+			else if (bestSoFar > beta)
+			{
+				return bestSoFar;
+			}
+			alpha = std::max(alpha, bestSoFar);
+		}
+		return bestSoFar;
+	}
+	else if (currentPlayer == Player::black)
+	{
+		int bestSoFar{ INT_MAX };
+		std::vector<std::shared_ptr<ChessMove>> validMoves{m_model->generateValidMoves()};
+		for (auto validMove : validMoves)
+		{
+			m_model->simulateMove(validMove);
+			int simulatedEvaluation{ alphaBeta(depth - 1, alpha, beta) };
+			m_model->undoMove(validMove);
+			if (simulatedEvaluation < bestSoFar)
+			{
+				bestSoFar = simulatedEvaluation;
+			}
+			else if (bestSoFar < alpha)
+			{
+				return bestSoFar;
+			}
+			beta = std::min(beta, bestSoFar);
+		}
+		return bestSoFar;
+	}
 }

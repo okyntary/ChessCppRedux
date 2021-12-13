@@ -5,7 +5,8 @@
 
 #include "Controller.h"
 
-Controller::Controller(Model* const model, View* const view) : m_model{ model }, m_view{ view } {}
+Controller::Controller(Model* const model, View* const view) : m_model{ model }, m_view{ view },
+		m_gameStart{ false }, m_controllerPlayer{ ControllerPlayer::null } {}
 
 bool Controller::readInput() 
 {
@@ -42,6 +43,10 @@ bool Controller::readInput()
 		}
 		params.push_back(input);
 	}
+	else if (input == "START")
+	{
+		command = Command::startGame;
+	}
 	else if (input == "UNDO" || input == "UN")
 	{
 		command = Command::undoLastMove;
@@ -57,6 +62,21 @@ bool Controller::readInput()
 	else if (input == "HISTORY" || input == "HIS")
 	{
 		command = Command::showMoveHistory;
+	}
+	else if (input == "PLAYERN" || input == "PN")
+	{
+		command = Command::chooseColor;
+		params.push_back("null");
+	}
+	else if (input == "PLAYERW" || input == "PW")
+	{
+		command = Command::chooseColor;
+		params.push_back("white");
+	}
+	else if (input == "PLAYERB" || input == "PB")
+	{
+		command = Command::chooseColor;
+		params.push_back("black");
 	}
 	else if (input == "SIZES" || input == "SS")
 	{
@@ -94,6 +114,8 @@ bool Controller::readInput()
 		return display();
 	case Controller::Command::validMoves:
 		return showValidMoves();
+	case Controller::Command::startGame:
+		return startGame();
 	case Controller::Command::enterMove:
 		return enterMove(params.at(0));
 	case Controller::Command::undoLastMove:
@@ -104,6 +126,8 @@ bool Controller::readInput()
 		return showCapturedPieces();
 	case Controller::Command::showMoveHistory:
 		return showMoveHistory();
+	case Controller::Command::chooseColor:
+		return chooseColor(params.at(0));
 	case Controller::Command::setSize:
 		return setSize(params.at(0));
 	case Controller::Command::toggleFlippedStatus:
@@ -148,37 +172,100 @@ bool Controller::display() const
 
 bool Controller::showValidMoves() const
 {
-	m_view->showValidMoves();
+	if (m_gameStart) m_view->showValidMoves();
+	else m_view->showGameNotStarted();
 	return false;
 }
 
+bool Controller::startGame()
+{
+	if (!m_gameStart)
+	{
+		if (m_controllerPlayer == ControllerPlayer::black)
+		{
+			m_model->runEngine();
+		}
+		m_gameStart = true;
+	}
+	return false;
+}
 bool Controller::enterMove(std::string move) const
 {
-	m_model->enterMove(move);
+	if (m_gameStart) m_model->enterMove(move);
+	else m_view->showGameNotStarted();
 	return false;
 }
 
 bool Controller::undoLastMove()
 {
-	m_model->undoLastMove();
-	m_view->undoLastMove();
+	if (m_gameStart)
+	{
+		m_model->undoLastMove();
+		m_view->undoLastMove();
+	}
+	else m_view->showGameNotStarted();
 	return false;
 }
 
 bool Controller::showCapturedPieces() const
 {
-	m_view->showCapturedPieces();
+	if (m_gameStart) m_view->showCapturedPieces();
+	else m_view->showGameNotStarted();
 	return false;
 }
 
 bool Controller::showMoveHistory() const
 {
-	m_view->showMoveHistory();
+	if (m_gameStart) m_view->showMoveHistory();
+	else m_view->showGameNotStarted();
+	return false;
+}
+
+bool Controller::chooseColor(std::string color)
+{
+	ControllerPlayer controllerPlayer{};
+	if (color == "null")
+	{
+		controllerPlayer = ControllerPlayer::null;
+	}
+	else if (color == "white")
+	{
+		controllerPlayer = ControllerPlayer::white;
+	}
+	else if (color == "black")
+	{
+		controllerPlayer = ControllerPlayer::black;
+	}
+
+	if (!m_gameStart)
+	{
+		m_controllerPlayer = controllerPlayer;
+		switch (controllerPlayer)
+		{
+		case ControllerPlayer::null:
+			m_view->showChooseColor(Player::null);
+			break;
+		case ControllerPlayer::white:
+			m_view->showChooseColor(Player::white);
+			break;
+		case ControllerPlayer::black:
+			m_view->showChooseColor(Player::black);
+			break;
+		default:
+			break;
+		}
+	}
+	else
+	{
+		m_view->showCannotChooseColor();
+	}
 	return false;
 }
 
 bool Controller::resetChessboard()
 {
+	m_gameStart = false;
+	m_controllerPlayer = ControllerPlayer::null;
 	m_view->resetChessboard();
 	m_model->resetChessboard();
 	return false;

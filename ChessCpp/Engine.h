@@ -43,6 +43,9 @@ public:
 	// Simulates a given move and returns the evaluation of the simulated board state
 
 	int evaluate() const;
+	int evaluate(int depth) const;
+private:
+	int alphaBeta(int depth, int alpha, int beta) const;
 };
 
 class Opening
