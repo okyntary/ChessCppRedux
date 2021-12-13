@@ -12,11 +12,11 @@ int main()
 {
     Model model;
 
-    View view{ &model };
-    model.setView(&view);
-
     Engine engine{ &model };
     model.setEngine(&engine);
+
+    View view{ &model };
+    model.setView(&view);
 
     Controller controller(&model, &view);
 

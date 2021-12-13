@@ -17,6 +17,7 @@ class Controller
 		display,
 		validMoves,
 		enterMove,
+		undoLastMove,
 		resetChessboard,
 		showCaptured,
 		showMoveHistory,
@@ -39,6 +40,7 @@ public:
 	bool display() const;
 	bool showValidMoves() const;
 	bool enterMove(std::string move) const;
+	bool undoLastMove();
 	bool showCapturedPieces() const;
 	bool showMoveHistory() const;
 	bool resetChessboard();

@@ -30,7 +30,7 @@ void Model::setEngine(Engine* engine)
 	m_engine = engine;
 }
 
-void Model::updateEngine() const
+void Model::runEngine() const
 {
 	m_engine->update();
 }
@@ -675,7 +675,7 @@ void Model::enterMove(std::string move)
 	if (validMove)
 	{
 		applyMove(validMove);
-		// updateEngine();
+		runEngine();
 	}
 	else
 	{
@@ -766,96 +766,20 @@ void Model::applyMove(std::shared_ptr<ChessMove>& move)
 	// Check for stalemate and checkmate
 	if (isCheckmated()) m_view->isCheckmated();
 	else if (isChecked()) m_view->isChecked();
-
-	if (isStalemated()) m_view->isStalemated();
+	else if (isStalemated()) m_view->isStalemated();
 }
 
-void Model::testMoves()
+void Model::undoLastMove()
 {
-	std::cout << isChecked() << '\n';
-	std::shared_ptr<ChessMove> move1{ std::make_shared<ChessMove>(m_chessPieces[12], Coordinates{1, 4},
-			Coordinates{3, 4}, false, nullptr) };
-	applyMove(move1);
-
-	std::cout << isChecked() << '\n';
-	std::shared_ptr<ChessMove> move2{ std::make_shared<ChessMove>(m_chessPieces[27], Coordinates{6, 3}, Coordinates{5, 3}, false, nullptr) };
-	applyMove(move2);
-
-	std::cout << isChecked() << '\n';
-	std::shared_ptr<ChessMove> move3{ std::make_shared<ChessMove>(m_chessPieces[5], Coordinates{0, 5}, Coordinates{4, 1}, false, nullptr) };
-	applyMove(move3);
-
-	std::cout << isChecked() << '\n';
-	std::shared_ptr<ChessMove> move4{ std::make_shared<ChessMove>(m_chessPieces[26], Coordinates{6, 2}, Coordinates{5, 2}, false, nullptr) };
-	applyMove(move4);
-
-	std::cout << isChecked() << '\n';
-	std::shared_ptr<ChessMove> move5{ std::make_shared<ChessMove>(m_chessPieces[5], Coordinates{4, 1}, Coordinates{5, 2}, true, m_chessPieces[26]) };
-	applyMove(move5);
-
-	std::cout << isChecked() << '\n';
-	std::shared_ptr<ChessMove> move6{ std::make_shared<ChessMove>(m_chessPieces[17], Coordinates{7, 3}, Coordinates{6, 3}, false, nullptr) };
-	applyMove(move6);
-
-	std::cout << isChecked() << '\n';
-	std::shared_ptr<ChessMove> move7{ std::make_shared<ChessMove>(m_chessPieces[7], Coordinates{0, 6}, Coordinates{2, 5}, false, nullptr) };
-	applyMove(move7);
-
-	std::cout << isChecked() << '\n';
-	std::shared_ptr<ChessMove> move8{ std::make_shared<ChessMove>(m_chessPieces[28], Coordinates{6, 5}, Coordinates{4, 5}, false, nullptr) };
-	applyMove(move8);
-
-	std::cout << isChecked() << '\n';
-	std::shared_ptr<ChessMove> move9{ std::make_shared<ChessMove>(m_chessPieces[12], Coordinates{3, 4}, Coordinates{4, 5}, true, m_chessPieces[28]) };
-	applyMove(move9);
-
-	std::cout << isChecked() << '\n';
-	std::shared_ptr<ChessMove> move10{ std::make_shared<ChessMove>(m_chessPieces[30], Coordinates{6, 6}, Coordinates{4, 6}, false, nullptr) };
-	applyMove(move10);
-
-	std::cout << isChecked() << '\n';
-	std::shared_ptr<ChessMove> move11{ std::make_shared<CastleShort>(m_chessPieces[0], Coordinates{0, 4}, Coordinates{0, 6}) };
-	applyMove(move11);
-
-	std::cout << isChecked() << '\n';
-	std::shared_ptr<ChessMove> move12{ std::make_shared<ChessMove>(m_chessPieces[28], Coordinates{6, 4}, Coordinates{4, 4}, false, nullptr) };
-	applyMove(move12);
-
-	std::cout << isChecked() << '\n';
-	std::shared_ptr<ChessMove> move13{ std::make_shared<EnPassant>(m_chessPieces[12], Coordinates{4, 5}, Coordinates{5, 4}, m_chessPieces[28]) };
-	applyMove(move13);
-
-	//std::cout << isChecked() << '\n';
-	//std::shared_ptr<ChessMove> move11{ std::make_shared<ChessMove>(m_chessPieces[0], Coordinates{0, 4}, Coordinates{0, 5}, false, nullptr) };
-	//applyMove(move11);
-
-	//std::cout << isChecked() << '\n';
-	//std::shared_ptr<ChessMove> move12{ std::make_shared<ChessMove>(m_chessPieces[17], Coordinates{6, 3}, Coordinates{5, 2}, true, m_chessPieces[5]) };
-	//applyMove(move12);
-
-	//std::cout << isChecked() << '\n';
-	//std::shared_ptr<ChessMove> move13{ std::make_shared<ChessMove>(m_chessPieces[12], Coordinates{4, 5}, Coordinates{5, 5}, false, nullptr) };
-	//applyMove(move13);
-
-	//std::cout << isChecked() << '\n';
-	//std::shared_ptr<ChessMove> move14{ std::make_shared<ChessMove>(m_chessPieces[16], Coordinates{7, 4}, Coordinates{7, 3}, false, nullptr) };
-	//applyMove(move14);
-
-	//std::cout << isChecked() << '\n';
-	//std::shared_ptr<ChessMove> move15{ std::make_shared<ChessMove>(m_chessPieces[12], Coordinates{5, 5}, Coordinates{6, 4}, true, m_chessPieces[28]) };
-	//applyMove(move15);
-
-	//std::cout << isChecked() << '\n';
-	//std::shared_ptr<ChessMove> move16{ std::make_shared<ChessMove>(m_chessPieces[16], Coordinates{7, 3}, Coordinates{6, 2}, false, nullptr) };
-	//applyMove(move16);
-
-	;
+	if (!m_moveHistory.isEmpty())
+	{
+		std::shared_ptr<ChessMove> lastMove{ m_moveHistory.getLastMove() };
+		undoMove(lastMove);
+	}
+	m_validMoves = generateValidMoves();
 }
 
-void Model::testPlausibleMoves()
+const int Model::getEvaluation() const
 {
-	std::vector<std::shared_ptr<ChessMove>> plausibleMovesWhite{ generatePlausibleMoves() };
-	std::vector<std::shared_ptr<ChessMove>> plausibleMovesBlack{ generatePlausibleMoves(Player::black) };
-	plausibleMovesWhite;
-	plausibleMovesBlack;
+	return m_engine->evalute();
 }

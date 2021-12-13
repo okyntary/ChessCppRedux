@@ -45,6 +45,7 @@ public:
 	void showValidMoves() const;
 	void validMoveEntered() const;
 	void invalidMoveEntered() const;
+	void undoLastMove();
 
 	// Utility methods
 	void resetChessboard() const;
@@ -60,6 +61,9 @@ public:
 	void setSize(Size size);
 	void toggleFlippedStatus();
 	void toggleCoords();
+
+	// Engine methods
+	void showEngineEvaluation() const;
 
 	// Update the contents to be displayed
 	void update();

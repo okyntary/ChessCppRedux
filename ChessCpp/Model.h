@@ -36,6 +36,7 @@ private:
 	Player m_currentPlayer{ Player::white };
 
 	friend class Engine;
+	friend class Evaluator;
 	friend class View;
 
 public:
@@ -46,7 +47,7 @@ public:
 	void updateView() const;
 
 	void setEngine(Engine* engine);
-	void updateEngine() const;
+	void runEngine() const;
 
 	// Methods related to the actual model
 	void initialize();
@@ -93,8 +94,9 @@ public:
 	void simulateMove(std::shared_ptr<ChessMove>& move);
 	void undoMove(std::shared_ptr<ChessMove>& move);
 	void applyMove(std::shared_ptr<ChessMove>& move);
+	// Called by the controller to take back the last move played
+	void undoLastMove();
 
-	// Miscellaneous test methods
-	void testMoves();
-	void testPlausibleMoves();
+	// Engine methods
+	const int getEvaluation() const;
 };

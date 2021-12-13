@@ -30,6 +30,8 @@ protected:
 	PieceType m_type{ PieceType::null };
 	int m_moveCount{0};
 	bool m_isCaptured{ false };
+
+	friend class Engine;
 	friend class View;
 
 public:

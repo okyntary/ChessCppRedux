@@ -272,6 +272,11 @@ int MoveHistory::getTurnNumber() const
 	return 1 + m_moveHistory.size() / 2;
 }
 
+bool MoveHistory::isEmpty() const
+{
+	return !static_cast<bool>(m_moveHistory.size());
+}
+
 void MoveHistory::addMove(std::shared_ptr<ChessMove> move)
 {
 	m_moveHistory.push_back(move);
@@ -280,6 +285,12 @@ void MoveHistory::addMove(std::shared_ptr<ChessMove> move)
 void MoveHistory::popMove()
 {
 	m_moveHistory.pop_back();
+}
+
+std::shared_ptr<ChessMove> MoveHistory::getLastMove() const
+{
+	if (isEmpty()) return nullptr;
+	return *(--m_moveHistory.end());
 }
 
 std::string MoveHistory::toString() const

@@ -78,8 +78,10 @@ private:
 public:
 	MoveHistory();
 	int getTurnNumber() const;
+	bool isEmpty() const;
 	void addMove(std::shared_ptr<ChessMove> chessMove);
 	void popMove();
+	std::shared_ptr<ChessMove> getLastMove() const;
 
 	std::string toString() const;
 };

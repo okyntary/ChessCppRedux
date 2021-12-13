@@ -42,6 +42,10 @@ bool Controller::readInput()
 		}
 		params.push_back(input);
 	}
+	else if (input == "UNDO" || input == "UN")
+	{
+		command = Command::undoLastMove;
+	}
 	else if (input == "RESET")
 	{
 		command = Command::resetChessboard;
@@ -92,6 +96,8 @@ bool Controller::readInput()
 		return showValidMoves();
 	case Controller::Command::enterMove:
 		return enterMove(params.at(0));
+	case Controller::Command::undoLastMove:
+		return undoLastMove();
 	case Controller::Command::resetChessboard:
 		return resetChessboard();
 	case Controller::Command::showCaptured:
@@ -149,6 +155,13 @@ bool Controller::showValidMoves() const
 bool Controller::enterMove(std::string move) const
 {
 	m_model->enterMove(move);
+	return false;
+}
+
+bool Controller::undoLastMove()
+{
+	m_model->undoLastMove();
+	m_view->undoLastMove();
 	return false;
 }
 

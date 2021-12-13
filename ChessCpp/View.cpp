@@ -44,6 +44,13 @@ void View::invalidMoveEntered() const
 	std::cout << "Invalid move entered.\n";
 }
 
+void View::undoLastMove()
+{
+	std::cout << "Last move undone.\n";
+	update();
+	display();
+}
+
 void View::resetChessboard() const
 {
 	std::cout << "Chessboard reset.";
@@ -105,6 +112,11 @@ void View::toggleCoords()
 	display();
 }
 
+void View::showEngineEvaluation() const
+{
+	std::cout << "Evaluation: " + std::to_string(m_model->getEvaluation()) + "\n";
+}
+
 void View::update()
 {
 	std::cout << "Updating chessboard.\n";
@@ -148,6 +160,8 @@ void View::update()
 			else updateFlippedLargeCoordful();
 		}
 	}
+	// Remove later?
+	if (m_model) showEngineEvaluation();
 }
 
 void View::updateUnflippedSmallCoordless()
