@@ -93,9 +93,9 @@ public:
 	// Methods related to making moves
 	void simulateMove(std::shared_ptr<ChessMove>& move);
 	void undoMove(std::shared_ptr<ChessMove>& move);
-	void applyMove(std::shared_ptr<ChessMove>& move);
-	// Called by the controller to take back the last move played
+	// Called by the controller to undo the last move played
 	void undoLastMove();
+	void applyMove(std::shared_ptr<ChessMove>& move);
 
 	// Engine methods
 	const int getEvaluation() const;

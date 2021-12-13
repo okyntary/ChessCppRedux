@@ -4,8 +4,10 @@
 #include <map>
 #include <memory>
 
+#include "ChessMove.h"
 #include "ChessPiece.h"
 
+enum class Player;
 class Model;
 #include "Model.h"
 
@@ -33,12 +35,14 @@ public:
 	Engine(Model* model);
 
 	// Pulls information from Model
-	void update() const;
+	void playMove() const;
 
 	// Responds with a randomly chosen valid move
-	void chooseRandomMove() const;
+	std::shared_ptr<ChessMove> chooseRandomMove() const;
+	std::shared_ptr<ChessMove> searchForBestMove(int depth, Player currentPlayer) const;
+	// Simulates a given move and returns the evaluation of the simulated board state
 
-	int evalute() const;
+	int evaluate() const;
 };
 
 class Opening

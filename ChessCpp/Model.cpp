@@ -32,7 +32,7 @@ void Model::setEngine(Engine* engine)
 
 void Model::runEngine() const
 {
-	m_engine->update();
+	m_engine->playMove();
 }
 
 void Model::initialize()
@@ -675,7 +675,7 @@ void Model::enterMove(std::string move)
 	if (validMove)
 	{
 		applyMove(validMove);
-		runEngine();
+		if (!m_validMoves.empty()) runEngine();
 	}
 	else
 	{
@@ -745,16 +745,32 @@ bool Model::isStalemated(Player player)
 
 void Model::simulateMove(std::shared_ptr<ChessMove>& move)
 {
-	swapCurrentPlayer();
-	m_moveHistory.addMove(move);
-	move->applyMove(m_chessboard, getTurnNumber());
+	if (move)
+	{
+		swapCurrentPlayer();
+		m_moveHistory.addMove(move);
+		move->applyMove(m_chessboard, getTurnNumber());
+	}
 }
 
 void Model::undoMove(std::shared_ptr<ChessMove>& move)
 {
-	move->undoMove(m_chessboard);
-	m_moveHistory.popMove();
-	swapCurrentPlayer();
+	if (move)
+	{
+		move->undoMove(m_chessboard);
+		m_moveHistory.popMove();
+		swapCurrentPlayer();
+	}
+}
+
+void Model::undoLastMove()
+{
+	if (!m_moveHistory.isEmpty())
+	{
+		std::shared_ptr<ChessMove> lastMove{ m_moveHistory.getLastMove() };
+		undoMove(lastMove);
+	}
+	m_validMoves = generateValidMoves();
 }
 
 void Model::applyMove(std::shared_ptr<ChessMove>& move)
@@ -769,17 +785,7 @@ void Model::applyMove(std::shared_ptr<ChessMove>& move)
 	else if (isStalemated()) m_view->isStalemated();
 }
 
-void Model::undoLastMove()
-{
-	if (!m_moveHistory.isEmpty())
-	{
-		std::shared_ptr<ChessMove> lastMove{ m_moveHistory.getLastMove() };
-		undoMove(lastMove);
-	}
-	m_validMoves = generateValidMoves();
-}
-
 const int Model::getEvaluation() const
 {
-	return m_engine->evalute();
+	return m_engine->evaluate();
 }

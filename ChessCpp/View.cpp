@@ -161,7 +161,7 @@ void View::update()
 		}
 	}
 	// Remove later?
-	if (m_model) showEngineEvaluation();
+	// if (m_model) showEngineEvaluation();
 }
 
 void View::updateUnflippedSmallCoordless()
