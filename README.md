@@ -2,6 +2,8 @@
 
 ChessCpp is a program written in C++ that runs in the console, that allows you to simulate a game of chess, and to play against a basic chess AI. I wrote it over the first two weeks of December 2021.
 
+A small demo of ChessCpp is available in the /Demo folder.
+
 Since it's written in Visual Studio, I expect that only Windows users can use it. I haven't checked how to compile Visual Studio C++ files in other OS's, so I'm not certain if that's possible, but I suspect that all that's required for compilation are the .cpp and .h files.
 
 # Features
