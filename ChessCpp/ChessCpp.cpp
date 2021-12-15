@@ -21,6 +21,7 @@ int main()
     Controller controller(&model, &view);
 
     bool isExit = false;
+    controller.showWelcome();
     while (!isExit)
     {
         isExit = controller.readInput();

@@ -14,6 +14,7 @@ class Controller
 	enum class Command
 	{
 		quit,
+		showHelpMessage,
 		display,
 		validMoves,
 		startGame,
@@ -48,6 +49,8 @@ public:
 	static bool isPlausibleMove(std::string& move);
 
 	bool quit() const;
+	bool showWelcome() const;
+	bool showHelpMessage() const;
 	bool display() const;
 	bool showValidMoves() const;
 	bool startGame();

@@ -30,6 +30,10 @@ bool Controller::readInput()
 	{
 		command = Command::display;
 	}
+	else if (input == "HELP" || input == "H")
+	{
+		command = Command::showHelpMessage;
+	}
 	else if (input == "VALID" || input == "V")
 	{
 		command = Command::validMoves;
@@ -112,6 +116,8 @@ bool Controller::readInput()
 		return quit();
 	case Controller::Command::display:
 		return display();
+	case Controller::Command::showHelpMessage:
+		return showHelpMessage();
 	case Controller::Command::validMoves:
 		return showValidMoves();
 	case Controller::Command::startGame:
@@ -164,6 +170,18 @@ bool Controller::quit() const
 	return true;
 }
 
+bool Controller::showWelcome() const
+{
+	m_view->showWelcome();
+	return false;
+}
+
+bool Controller::showHelpMessage() const
+{
+	m_view->showHelpMessage();
+	return false;
+}
+
 bool Controller::display() const
 {
 	m_view->display();
@@ -200,8 +218,15 @@ bool Controller::undoLastMove()
 {
 	if (m_gameStart)
 	{
-		m_model->undoLastMove();
-		m_view->undoLastMove();
+		if (m_controllerPlayer == ControllerPlayer::null)
+		{
+			m_model->undoLastMove();
+			m_view->undoLastMove();
+		} 
+		else
+		{
+			std::cout << "No takebacks!\n";
+		}
 	}
 	else m_view->showGameNotStarted();
 	return false;

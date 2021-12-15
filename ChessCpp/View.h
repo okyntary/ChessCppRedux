@@ -28,6 +28,9 @@ private:
 	bool m_flippedStatus{ false };
 	bool m_showCoords{ false };
 
+	static const std::string m_welcomeMessage;
+	static const std::string m_helpMessage;
+
 	static const std::string mediumUpperLineBreak;
 	static const std::string mediumInnerLineBreak;
 	static const std::string mediumLowerLineBreak;
@@ -54,6 +57,8 @@ public:
 	void showCapturedPieces() const;
 	void showMoveHistory() const;
 
+	void showWelcome() const;
+	void showHelpMessage() const;
 	void showGameStarted() const;
 	void showGameNotStarted() const;
 	void showGameAlreadyStarted() const;
