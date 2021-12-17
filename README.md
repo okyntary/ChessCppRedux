@@ -1,6 +1,6 @@
 # ChessCppRedux
 
-ChessCpp is a program written in C++ that runs in the console, that allows you to simulate a game of chess, and to play against a basic chess AI. I wrote it over the first two weeks of December 2021.
+ChessCpp is a program written in C++ that runs in the console, that allows you to simulate a game of chess, and to play against a basic chess AI. I wrote it (without following any tutorials) over the first two weeks of December 2021.
 
 A small demo of ChessCpp is available in the /Demo folder.
 
